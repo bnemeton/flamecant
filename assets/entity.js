@@ -56,6 +56,7 @@ class Entity extends Glyph{
             // item out of the list of items. In order to fetch the right item, we
             // have to offset the number of items already added.
             if (this.giveItem(mapItems[indices[i]  - added])) {
+                console.log('picked up a ' + mapItems[indices[i] - added].name)
                 mapItems.splice(indices[i] - added, 1);
                 added++;
             } else {

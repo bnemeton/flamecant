@@ -162,12 +162,15 @@ class ItemListScreen {
         this.label = type.label;
         this.okFunction = type.okFunction;
         this.selectable = type.selectable;
-        this.multiSelect = type.multiSelect;
+        this.multiselect = type.multiselect;
         this.indent = (Game._screenWidth/2) - 16;
         this.top = (Game._screenHeight/2) - 16;
     }
 
     setup(player, items) {
+        if (items.length === 0) {
+            Game.setSubScreen(null);
+        }
         this.player = player;
         this.items = items;
         this.selectedIndices = [];
@@ -189,20 +192,21 @@ class ItemListScreen {
         // Call the OK function and end the player's turn if it return true.
         if (this.okFunction(selectedItems, this.selectedIndices)) {
             this.player.getMap().getEngine().unlock();
+            Game.Screen.playScreen.setSubScreen(null);
         }
     }
 
     handleInput(inputType, inputData) {
-        console.log('should be awaiting subscreen input...') // but it never hits any of the below ifs? but you can hit this console log again by hitting a key again
-        console.log(`input keycode: ${inputData.keyCode}`)
-        console.log(`input type: ${inputType}`)
+        // console.log('should be awaiting subscreen input...') // but it never hits any of the below ifs? but you can hit this console log again by hitting a key again
+        // console.log(`input keycode: ${inputData.keyCode}`)
+        // console.log(`input type: ${inputType}`)
         if (inputType === 'keydown') {
             // If the user hit escape, hit enter and can't select an item, or hit
             // enter without any items selected, simply cancel out
             if (inputData.keyCode === ROT.KEYS.VK_ESCAPE || 
                 (inputData.keyCode === ROT.KEYS.VK_RETURN && 
                 (!this.selectable || this.selectedIndices.length === 0))) {
-                    console.log('setting subscreen to null')
+                    // console.log('setting subscreen to null')
                     Game.Screen.playScreen.setSubScreen(null);
                     Game.refresh(); // is this necessary?
             } else if (inputData.keyCode === ROT.KEYS.VK_RETURN) { // if they press return with an item selected
@@ -214,17 +218,18 @@ class ItemListScreen {
                 // Check if it maps to a valid item by subtracting 'a' from the character
                 // to know what letter of the alphabet we used.
                 var index = inputData.keyCode - ROT.KEYS.VK_A;
-                console.log(`this is the index: ${index}`)
+                console.log(`this is the index: ${index}`) //this is correct, but the actual update onscreen is always for the first item?
                 if (this.items[index]) {
                     // If multiple selection is allowed, toggle the selection status, else
                     // select the item and exit the screen
-                    if (this.multiSelect) {
+                    if (this.multiselect) {
+                        // console.log('multiselect enabled...')
                         if (this.selectedIndices.includes(index)) {
-                            for (entry in this.selectedIndices) {
+                            this.selectedIndices.forEach(entry => {
                                 if (entry === index) {
-                                    this.selectedIndices.splice(indexOf(entry), 1)
-                                }
+                                this.selectedIndices.splice(this.selectedIndices.indexOf(entry), 1)
                             }
+                        })
                         } else {
                             this.selectedIndices.push(index)
                         }
@@ -250,8 +255,8 @@ class ItemListScreen {
                 var letter = letters.substring(i, i + 1);
                 // If we have selected an item, show a +, else show a dash between
                 // the letter and the item's name.
-                var selectionState = (this.selectable && this.multiSelect &&
-                    this.selectedIndices[i]) ? '+' : '-';
+                var selectionState = (this.selectable && this.multiselect &&
+                    this.selectedIndices.includes(i)) ? '+' : '-';
                 // Render at the correct row and add 2.
                 display.drawText(this.indent, this.top + 2 + row, letter + ' ' + selectionState + ' ' + this.items[i].name);
                 row++;
