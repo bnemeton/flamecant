@@ -57,6 +57,7 @@ class OptionWindow {
 
     setup(player) {
         this.player = player;
+        console.log(`window should be labeled ${this.label}`)
     }
 
     okFunction(option) {
@@ -170,18 +171,19 @@ class ItemListScreen {
         this.player = player;
         this.items = items;
         this.selectedIndices = [];
-        console.log(`here are the selected indices (should be none):`)
-        console.log(this.selectedIndices)
+        // console.log(`here are the selected indices (should be none):`)
+        // console.log(this.selectedIndices)
+        // console.log(`window should be labeled ${this.label}`)
     }
 
     executeOkFunction(item, index) { //leaving these here in case i want them later
         // gather selected items
+        // console.log('here are the selected indices:')
+        // console.log(this.selectedIndices)
         var selectedItems = [];
-        for (var i in this.selectedIndices) {
-            selectedItems.push(this.items[i]);
-        }
-        console.log('Here are the selected items:')
-        console.log(selectedItems)
+        this.selectedIndices.forEach(entry => selectedItems.push(this.items[entry]));
+        // console.log('Here are the selected items:')
+        // console.log(selectedItems) // always the top item in the inventory screen, regardless of the input, despite the previous console log giving the correct index. why is it the top one, rather than all of them or something?
         // //return to playscreen
         // Game.Screen.playScreen.setSubScreen(null);
         // Call the OK function and end the player's turn if it return true.
@@ -212,6 +214,7 @@ class ItemListScreen {
                 // Check if it maps to a valid item by subtracting 'a' from the character
                 // to know what letter of the alphabet we used.
                 var index = inputData.keyCode - ROT.KEYS.VK_A;
+                console.log(`this is the index: ${index}`)
                 if (this.items[index]) {
                     // If multiple selection is allowed, toggle the selection status, else
                     // select the item and exit the screen
@@ -263,12 +266,13 @@ Game.Screen.inventoryScreen = new ItemListScreen({
     multiselect: false,
     selectable: true,
     okFunction: function(selectedItems, selectedIndices) {
-        // console.log(`attempting to use a(n) ${item.name}`)
+        var item = selectedItems[0];
+        console.log(`attempting to use a(n) ${item.name}`)
         var window = new OptionWindow({
             index: selectedIndices[0],
-            item: selectedItems[0],
-            options: selectedItems[0].options,
-            label: `What do you want to do with this ${selectedItems[0].name}?`
+            item: item,
+            options: item.options,
+            label: `What do you want to do with this ${item.name}?`
         })
         window.setup(this.player)
         Game.Screen.playScreen.setSubScreen(window);
