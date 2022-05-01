@@ -26,12 +26,12 @@ function shuffle(array) {
 var Game =  {
     _display: null,
     _currentScreen: null,
-    _screenWidth: 128,
-    _screenHeight: 40,
+    _screenWidth: 64,
+    _screenHeight: 20,
     messages: [],
     init: function() {
         // Any necessary initialization will go here.
-        this._display = new ROT.Display({width: this._screenWidth, height: this._screenHeight + 1});
+        this._display = new ROT.Display({width: this._screenWidth, height: this._screenHeight + 1, fontSize: 25});
 
         // Create a helper function for binding to an event
         // and making it send it to the screen
@@ -68,6 +68,7 @@ var Game =  {
     },
     message: function(message, args) {
         this.messages.push(message);
+
     },
     getNeighborPositions: function(x, y) {
         var tiles = [];

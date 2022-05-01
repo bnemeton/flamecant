@@ -31,8 +31,16 @@ Game.Screen.startScreen = {
     enter: function() {console.log('entered start screen...')},
     exit: function() {console.log('exited start screen.')},
     render: function(display) {
-        display.drawText(53, 10, fireColor + "~ ^ ~ FLAMECANT ~ ^ ~");
-        display.drawText(53, 12, ashColor + "press [enter] to start");
+        display.drawText(20, 3, fireColor + "~ ^ ~ FLAMECANT ~ ^ ~");
+        display.drawText(20, 5, ashColor + "press [enter] to start");
+        display.drawText(10, 9, ashColor + `
+                                            go to /help.html for basic instructions,
+                                            & a reference of commands!
+                                            
+                                            an actual page with both the game & instructions
+                                            & commands coming soon, along with actual basic 
+                                            QoL features!
+                                            `)
     },
     handleInput: function(inputType, inputData) {
         // when [enter] is pressed, go to the play screen
@@ -470,6 +478,9 @@ Game.Screen.playScreen = {
          display.drawText(0, screenHeight, stats)
          let messages = Game.messages;
          let messageHeight = 0;
+         if (messageHeight >= Game._screenHeight) {
+             messages.shift();
+         }
          for (let i=0; i < messages.length; i++) {
              //draw each message, adding its line count to height
              messageHeight += display.drawText(
