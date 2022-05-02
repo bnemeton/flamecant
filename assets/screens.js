@@ -30,10 +30,10 @@ var ashColor = "%c{" + fg + "}%b{" + bg + "}"
 Game.Screen.startScreen = {
     enter: function() {console.log('entered start screen...')},
     exit: function() {console.log('exited start screen.')},
-    render: function(display) {
-        display.drawText(20, 3, fireColor + "~ ^ ~ FLAMECANT ~ ^ ~");
-        display.drawText(20, 5, ashColor + "press [enter] to start");
-        display.drawText(10, 9, ashColor + `
+    render: function(displays) {
+        displays.main.drawText(32, 6, fireColor + "~ ^ ~ FLAMECANT ~ ^ ~");
+        displays.main.drawText(32, 8, ashColor + "press [enter] to start");
+        displays.main.drawText(22, 12, ashColor + `
                                             go to /help.html for basic instructions,
                                             & a reference of commands!
                                             
@@ -41,6 +41,8 @@ Game.Screen.startScreen = {
                                             & commands coming soon, along with actual basic 
                                             QoL features!
                                             `)
+        displays.text.drawText(0, 0, ashColor + `
+                                                As a scholar, you have heard it mentioned in scattered arcane texts: a language whose very words and grammar allow for the magical manipulation of fire. Known as the ${fireColor}Flamecant${ashColor}, it was the invention of a community of dedicated seekers of flame, devotees to the teachings of fire itself. Blah blah blah and et cetera, hints at the deep lore, you have come seeking the Flame, if it still lingers, and so on. Your message log appears in this column.`)
     },
     handleInput: function(inputType, inputData) {
         // when [enter] is pressed, go to the play screen
@@ -354,13 +356,13 @@ Game.Screen.playScreen = {
         this._player.tryMove(newX, newY, newZ, this._map);
     },
     // exit: function() {console.log("exited play screen."); },
-    render: function(display) {
+    render: function(displays) {
         if (this.subScreen) {
-            this.subScreen.render(display);
+            this.subScreen.render(displays.main);
             return;
         }
         // console.log('rendering screen!')
-        var screenWidth = (Game.getScreenWidth()/3)*2;
+        var screenWidth = (Game.getScreenWidth());
         var screenHeight = Game.getScreenHeight();
         // console.log('got screen dimensions!')
         // Make sure the x-axis doesn't go to the left of the left bound
@@ -441,7 +443,7 @@ Game.Screen.playScreen = {
                         // dark gray.
                         foreground = 'darkslategrey';
                     }
-                    display.draw(
+                    displays.main.draw(
                         x - topLeftX,
                         y - topLeftY,
                         glyph.getChar(), 
@@ -475,7 +477,7 @@ Game.Screen.playScreen = {
         //  }
          //render messages and stat bar
          var stats = `%c{white}%b{black} HP: ${this._player.getHp()} / ${this._player.getMaxHp()}   GLYPHS: ${this._player.glyphs}   ATK: ${this._player.damage}   ARMOR: ${this._player.armor}`
-         display.drawText(0, screenHeight, stats)
+         displays.main.drawText(0, screenHeight, stats)
          let messages = Game.messages;
          let messageHeight = 0;
          if (messageHeight >= Game._screenHeight) {
@@ -483,7 +485,7 @@ Game.Screen.playScreen = {
          }
          for (let i=0; i < messages.length; i++) {
              //draw each message, adding its line count to height
-             messageHeight += display.drawText(
+             messageHeight += displays.text.drawText(
                 ((screenWidth/3)*2)+27,
                  messageHeight,
                  '%c{white}%b{black}' + messages[i]
@@ -645,7 +647,7 @@ Game.Screen.playScreen = {
 Game.Screen.winScreen = {
     enter: function() {console.log("entering win screen..."); },
     exit: function() { console.log("exited win screen."); },
-    render: function(display) {
+    render: function(displays) {
         // Render our prompt to the screen
         for (var i = 0; i < 19; i++) {
             // Generate random background colors
@@ -658,7 +660,7 @@ Game.Screen.winScreen = {
                 255-(i*20),
                 255-(i*20)
             ])
-            display.drawText(5*i, 2*i, "%c{" + fg + "}%b{" + background + "}T R I U M P H   O F   F L A M E !");
+            displays.main.drawText(5*i, 2*i, "%c{" + fg + "}%b{" + background + "}T R I U M P H   O F   F L A M E !");
         }
     },
     handleInput: function(inputType, inputData) {
@@ -670,7 +672,7 @@ Game.Screen.winScreen = {
 Game.Screen.loseScreen = {
     enter: function() {console.log("entering lose screen..."); },
     exit: function() { console.log("exited lose screen."); },
-    render: function(display) {
+    render: function(displays) {
         // Render our prompt to the screen
         for (var i = 0; i < 35; i++) {
             let r = 225 - (6*i);
@@ -680,7 +682,7 @@ Game.Screen.loseScreen = {
                 r, g, b
             ])
             let mod = (Math.floor(Math.random()*23)-(Math.floor(Math.random()*23)))
-            display.drawText(50 + mod, i + 1, `%c{${color}}the flame goes out...`);
+            displays.main.drawText(50 + mod, i + 1, `%c{${color}}the flame goes out...`);
         }
     },
     handleInput: function(inputType, inputData) {
