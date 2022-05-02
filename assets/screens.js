@@ -486,7 +486,7 @@ Game.Screen.playScreen = {
          for (let i=0; i < messages.length; i++) {
              //draw each message, adding its line count to height
              messageHeight += displays.text.drawText(
-                ((screenWidth/3)*2)+27,
+                0,
                  messageHeight,
                  '%c{white}%b{black}' + messages[i]
              );
