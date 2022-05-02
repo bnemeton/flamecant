@@ -28,6 +28,8 @@ i have been thinking of my plans broadly as either short term or long term; focu
 - implement arrow key controls (with diagonals, somehow)
 - implement cursor/selector and/or mouse controls for menus
 - set up mouse tooltips for checking what something visible on the map is
+- add an actually fun lore intro to the start screen
+- maybe ascii art for the start screen
 
 ### long term
 - set up the framework for generating and loading zones of levels

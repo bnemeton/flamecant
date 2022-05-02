@@ -42,7 +42,9 @@ Game.Screen.startScreen = {
                                             QoL features!
                                             `)
         displays.text.drawText(0, 0, ashColor + `
-                                                As a scholar, you have heard it mentioned in scattered arcane texts: a language whose very words and grammar allow for the magical manipulation of fire. Known as the ${fireColor}Flamecant${ashColor}, it was the invention of a community of dedicated seekers of flame, devotees to the teachings of fire itself. Blah blah blah and et cetera, hints at the deep lore, you have come seeking the Flame, if it still lingers, and so on. Your message log appears in this column.`)
+        You were perhaps a scholar--in one way or another you came upon the knowledge that in a certain place, a community of disciples of fire magic had long ago gathered together to pool their discoveries and attain deeper mystical understanding of fire. This community they founded, this cenobium of fire, sought ever-deeper the mysteries of the flame. But that was long ago, and their existence is known but to a few--most of these stay away, but you have felt in your heart the pull, the draw, of the fire--in the terms of the cenobium's own mysteries, you are a moth--and like a moth, you have been drawn in... You descended into the caves leading to the cloistered community, but the path ahead is less certain. 
+        
+        Message log will appear here.`)
     },
     handleInput: function(inputType, inputData) {
         // when [enter] is pressed, go to the play screen
