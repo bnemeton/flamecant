@@ -29,7 +29,7 @@ i have been thinking of my plans broadly as either short term or long term; focu
 - implement arrow key controls (with diagonals, somehow)
 - implement cursor/selector and/or mouse controls for menus
 - set up mouse tooltips for checking what something visible on the map is
-- add an actually fun lore intro to the start screen
+- ~~add an actually fun lore intro to the start screen~~ this one is okay but could be more flavorful...
 - maybe ascii art for the start screen
 
 ### long term
