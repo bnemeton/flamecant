@@ -25,13 +25,15 @@ function shuffle(array) {
 //game object
 var Game =  {
     _display: null,
+    _textDisplay: null,
     _currentScreen: null,
-    _screenWidth: 128,
-    _screenHeight: 40,
+    _screenWidth: 96,
+    _screenHeight: 30,
     messages: [],
     init: function() {
         // Any necessary initialization will go here.
-        this._display = new ROT.Display({width: this._screenWidth, height: this._screenHeight + 1});
+        this._display = new ROT.Display({width: this._screenWidth, height: this._screenHeight + 1, fontSize: 20});
+        this._textDisplay = new ROT.Display({width: 32, height: this._screenHeight+8, fontSize: 16})
 
         // Create a helper function for binding to an event
         // and making it send it to the screen
@@ -54,11 +56,18 @@ var Game =  {
     refresh: function() {
         //clear the screen
         this._display.clear();
+        this._textDisplay.clear();
         //re-render
-        this._currentScreen.render(this._display);
+        this._currentScreen.render({
+            main: this._display,
+            text: this._textDisplay
+        });
     },
     getDisplay: function() {
         return this._display;
+    },
+    getTextDisplay: function() {
+        return this._textDisplay;
     },
     getScreenWidth: function() {
         return this._screenWidth;
@@ -68,6 +77,7 @@ var Game =  {
     },
     message: function(message, args) {
         this.messages.push(message);
+
     },
     getNeighborPositions: function(x, y) {
         var tiles = [];
@@ -108,6 +118,7 @@ window.onload = function() {
     Game.init();
     //add the container to the page
     document.body.appendChild(Game.getDisplay().getContainer())
+    document.body.appendChild(Game.getTextDisplay().getContainer())
     //load start screen
     Game.switchScreen(Game.Screen.startScreen)
 }

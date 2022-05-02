@@ -52,7 +52,7 @@ class Enemy extends Entity {
         // console.log('trying to move!')
         var tile = map.getTile(x, y, this.getZ());
         var target = map.getEntityAt(x, y, this.getZ());
-        console.log(`${this.name} attempting to move into ${target.name}`)
+        // console.log(`${this.name} attempting to move into ${target.name}`)
         // console.log(target);
         //on stair?
         if (z < this.getZ()) {
