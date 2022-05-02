@@ -482,9 +482,6 @@ Game.Screen.playScreen = {
          displays.main.drawText(0, screenHeight, stats)
          let messages = Game.messages;
          let messageHeight = 0;
-         if (messageHeight >= Game._screenHeight) {
-             messages.shift();
-         }
          for (let i=0; i < messages.length; i++) {
              //draw each message, adding its line count to height
              messageHeight += displays.text.drawText(
@@ -493,6 +490,11 @@ Game.Screen.playScreen = {
                  '%c{white}%b{black}' + messages[i]
              );
          }
+        if (messageHeight >= screenHeight+8) {
+            messages.shift();
+            Game.messages.shift();
+            Game.refresh();
+        }
     },
     handleInput: function(inputType, inputData) {
         if (this._map.getEngine()._lock === 1) {   
