@@ -28,7 +28,7 @@ var Game =  {
     _textDisplay: null,
     _currentScreen: null,
     _screenWidth: 96,
-    _screenHeight: 27,
+    _screenHeight: 30,
     messages: [],
     init: function() {
         // Any necessary initialization will go here.
