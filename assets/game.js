@@ -26,12 +26,12 @@ function shuffle(array) {
 var Game =  {
     _display: null,
     _currentScreen: null,
-    _screenWidth: 64,
-    _screenHeight: 20,
+    _screenWidth: 120,
+    _screenHeight: 27,
     messages: [],
     init: function() {
         // Any necessary initialization will go here.
-        this._display = new ROT.Display({width: this._screenWidth, height: this._screenHeight + 1, fontSize: 25});
+        this._display = new ROT.Display({width: this._screenWidth, height: this._screenHeight + 1, fontSize: 20});
 
         // Create a helper function for binding to an event
         // and making it send it to the screen

@@ -66,7 +66,11 @@ class Entity extends Glyph{
         }
         // Update the map items
         this._map.setItemsAt(this.getX(), this.getY(), this.getZ(), mapItems);
-        Game.message("You picked up some items.")
+        
+        if (added > 1){
+            Game.message("You picked up some items.")
+        }
+            
         // Return true only if we added all items
         return added === indices.length;
     }

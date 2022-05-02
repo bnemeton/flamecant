@@ -172,7 +172,7 @@ class ItemListScreen {
         this.selectable = type.selectable;
         this.multiselect = type.multiselect;
         this.indent = (Game._screenWidth/2) - 16;
-        this.top = (Game._screenHeight/2) - 16;
+        this.top = (Game._screenHeight/2) - 9;
     }
 
     setup(player, items) {
@@ -360,7 +360,7 @@ Game.Screen.playScreen = {
             return;
         }
         // console.log('rendering screen!')
-        var screenWidth = Game.getScreenWidth();
+        var screenWidth = (Game.getScreenWidth()/3)*2;
         var screenHeight = Game.getScreenHeight();
         // console.log('got screen dimensions!')
         // Make sure the x-axis doesn't go to the left of the left bound
@@ -484,7 +484,7 @@ Game.Screen.playScreen = {
          for (let i=0; i < messages.length; i++) {
              //draw each message, adding its line count to height
              messageHeight += display.drawText(
-                 0,
+                ((screenWidth/3)*2)+27,
                  messageHeight,
                  '%c{white}%b{black}' + messages[i]
              );
