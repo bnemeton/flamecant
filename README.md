@@ -26,13 +26,13 @@ i have been thinking of my plans broadly as either short term or long term; focu
 - implement temperature/flammability/fire
 - implement animated tiles to indicate information like "this tile is on fire"
 - implement NPCs, trading, and dialogue
-- implement arrow key controls (with diagonals, somehow)
-- implement cursor/selector and/or mouse controls for menus
+- ~~implement arrow key controls (with diagonals, somehow)~~ dropped in favor of qweasdzxc controls which seem to work fine actually
 - set up mouse tooltips for checking what something visible on the map is
 - ~~add an actually fun lore intro to the start screen~~ this one is okay but could be more flavorful...
 - maybe ascii art for the start screen
 
 ### long term
+- implement cursor/selector and/or mouse controls for menus (moved to long term because cursor controls require a settings menu bc they would break letter index menus)
 - set up the framework for generating and loading zones of levels
 - set up either a save file or password system for returning players to start at zones past the first
 
