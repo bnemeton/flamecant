@@ -4,6 +4,7 @@ class Entity extends Glyph{
         super(properties);
         // Instantiate any properties from the passed object
         this.name = properties['name'] || '';
+        this.text = properties['text'] || '';
         this._x = properties['x'] || 0;
         this._y = properties['y'] || 0;
         this._z = properties['z'] || 0;

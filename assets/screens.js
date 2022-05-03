@@ -97,8 +97,8 @@ class OptionWindow {
 
     render(display) {
         var letters = 'abcdefghijklmnopqrstuvwxyz';
-        display.drawText(this.indent, this.top, this.item.text)
-        var row = 1;
+        display.drawText(this.indent, this.top, this.item.text, 50)
+        var row = 2;
         display.drawText(this.indent, this.top+row+1, this.label);
         row += 2
         for (var i = 0; i < this.options.length; i++) {
@@ -380,6 +380,7 @@ Game.Screen.playScreen = {
         this.topLeftY = Math.min(this.topLeftY, this._map.getHeight() - screenHeight);
 
         //track which cells are visible
+        this.visibleCells = {};
         var visibleCells = this.visibleCells;
         //find them and add to object
         // console.log(this._player.getZ())
@@ -516,7 +517,7 @@ Game.Screen.playScreen = {
             }    
             if (inputType === 'mousemove') {
                 //reposition the tooltip
-                console.log(inputData) //position is indeed stored in x and y; why isn't this working? //does ROT.Display.eventToPosition(e) care about e.x / e.y or diff props?
+                // console.log(inputData) //position is indeed stored in x and y; why isn't this working? //does ROT.Display.eventToPosition(e) care about e.x / e.y or diff props?
                 let x = inputData.x;
                 let y = inputData.y;
                 // console.log(`mouse at ${x}, ${y}`) //these work correctly
@@ -553,8 +554,9 @@ Game.Screen.playScreen = {
                 if (this.visibleCells[`${actualX},${actualY}`]) {
                     text = this._map.getTile(actualX,actualY,currentDepth).text;
                    
-                    if (this._map.getEntityAt(actualX,actualY,currentDepth)) {
-                        text = `There is a ${this._map.getEntityAt(actualX,actualY, currentDepth).name} here.`
+                    let entity = this._map.getEntityAt(actualX,actualY,currentDepth)
+                    if (entity) {
+                        text = `There is a ${entity.name} here. ${entity.text}`
 
                         if (this._map.getEntityAt(actualX,actualY, currentDepth).name === 'branded') {
                             text += ` It's you.`
@@ -563,7 +565,7 @@ Game.Screen.playScreen = {
                     
                     items = this._map.getItemsAt(actualX,actualY,currentDepth);
 
-                    if (items.length >0) {
+                    if (items.length > 0) {
                         if (items.length === 1) {
                             text += ` There is also a(n) ${items[0].name} here.`
                         } else {

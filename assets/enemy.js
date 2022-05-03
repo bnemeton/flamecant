@@ -9,6 +9,8 @@ class Enemy extends Entity {
         this.bagSlots = properties['bagSlots'] || 5;
         this.attacker = properties['attacker'] || true;
         this.corpseRate = properties['corpseRate'] || 0;
+        this.foes = properties['foes'] || [];
+        
     }
     attack(target) {
         console.log(`enemy attacking/targeting ${target.name}`)
@@ -23,9 +25,9 @@ class Enemy extends Entity {
                 crit = true;
             }
             if (crit) {
-                message = `the ${this.name} critically hit the ${target.name} for ${damage - target.armor} point(s) of damage!`
+                message = `The ${this.name} critically hit the ${target.name} for ${damage - target.armor} point(s) of damage!`
             } else {
-                message = `the ${this.name} hit the ${target.name} for ${damage - target.armor} point(s) of damage!`
+                message = `The ${this.name} hit the ${target.name} for ${damage - target.armor} point(s) of damage!`
             }
             Game.message(message)
             target.takeDamage(this, this.damage)
@@ -131,7 +133,8 @@ class Fungus extends Enemy {
             char: '෴',
             fg: pickedColor,
             attacker: true,
-            corpseRate: 50
+            corpseRate: 50,
+            text: "A thick sheet, it carpets the floor of the cave. Every so often, you catch it twitching in the corner of your eye."
         })
         this.name = 'fungus'
         this.hp = 3;
@@ -175,7 +178,8 @@ class Shambler extends Enemy {
         super({
             char: 'S',
             fg: 'darkseagreen',
-            corpseRate: 50
+            corpseRate: 50,
+            text: "An upright, ambulatory clump of fungus. It seems to take an interest in corpses."
         })
         this.name = 'shambler'
         this.hp = 5;
