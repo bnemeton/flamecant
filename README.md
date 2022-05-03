@@ -10,6 +10,7 @@ you can view controls at the help page, reachable at /help.html, but here are th
 - enter/return starts the game
 - escape backs out of menus
 - numpad movement controls (5 = pass one turn, other numbers move you in that direction as if 5 is the center of a compass; remember to turn on numlock)
+- new: qweasdzxc movement controls. like numpad but centered on s instead of 5, for people without numpads!
 - comma descends downward stairs <, period ascends upward stairs > (I might have swapped these from their conventional assignments by accident)
 - attack an enemy by moving into its space
 - p picks up items in your tile (multiple items will cause a pickup menu, letting you select which things to pick up)
