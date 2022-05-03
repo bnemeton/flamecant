@@ -28,7 +28,7 @@ i have been thinking of my plans broadly as either short term or long term; focu
 - implement animated tiles to indicate information like "this tile is on fire"
 - implement NPCs, trading, and dialogue
 - ~~implement arrow key controls (with diagonals, somehow)~~ dropped in favor of qweasdzxc controls which seem to work fine actually
-- set up mouse tooltips for checking what something visible on the map is
+- ~~set up mouse tooltips for checking what something visible on the map is~~ tooltips work now!
 - ~~add an actually fun lore intro to the start screen~~ this one is okay but could be more flavorful...
 - maybe ascii art for the start screen
 
