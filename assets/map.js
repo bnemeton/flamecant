@@ -23,7 +23,7 @@ class Map {
         //add the player
         this.addEntityAtRandomPosition(player, 0);
         //add enemies
-        var enemyTypes = [Fungus, Shambler];
+        var enemyTypes = [Fungus];
         for (var z=0; z<this._depth; z++){
             for (var i=0; i < 20; i++) {
                 var RandomEnemy = enemyTypes[Math.floor(Math.random()*enemyTypes.length)]
@@ -230,21 +230,41 @@ class Map {
         this._entities[key] = entity;
     };
     getEntitiesWithinRadius(centerX, centerY, centerZ, radius) {
-        results = [];
+        let results = [];
         // Determine our bounds
         var leftX = centerX - radius;
         var rightX = centerX + radius;
         var topY = centerY - radius;
         var bottomY = centerY + radius;
+        let counted = 0;
         // Iterate through our entities, adding any which are within the bounds
         for (var key in this._entities) {
-            var entity = this._entities[key];
-            if (entity.getX() >= leftX && entity.getX() <= rightX && 
+            // console.log(entity) // what exactly is this iterating over? oh it's the key. but that wasn't working before either...
+            let entity = this._entities[key]
+            // console.log(`checking the ${entity.name} at ${entity.getX()}, ${entity.getY()}`) //ugh this prints fine
+            // console.log(entity) // let's try this again... // this is printing entities appropriately. so why isn't the following ever pushing anyone to results?
+
+            // if (entity.getX() >= leftX && entity.getX() <= rightX) { //as suspected, this is never "true"... // even if i switch from getters to the props as if that would matter
+            //     console.log(`there's a ${entity.name} in the right columns...`)
+            //     if (entity.getY() >= topY && entity.getY() <= bottomY) {
+            //         console.log(`there's an ${entity.name} in the right rows...`)
+            //         if (entity.getZ() === centerZ) {
+            //             console.log('ding ding ding! it is on the correct floor! push that baby to the results array!!!')
+            //             results.push(entity)
+            //         }
+            //     }
+            // }
+
+            if (entity.getX() >= leftX && entity.getX() <= rightX && //entity.getX() isn't a function...? // bc entity was the key, addressed that
             entity.getY() >= topY && entity.getY() <= bottomY &&
-            entity.getZ() == centerZ) {
+            entity.getZ() === centerZ) {
+                console.log(entity.name+' detected!') // never fires???
                 results.push(entity);
             }
+            counted++
         }
+        console.log(`${counted} entities counted, ${results.length} results!`) // counted increases as fungi spawn, but results.length is always zero. aaaaaaa
+        // console.log(results) // always empty array... even though things *are* getting stored in the _entities object and can be retrieved just fine. baffling.
         return results;
     }
     addEntity(entity) {
