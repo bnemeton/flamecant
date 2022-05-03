@@ -516,12 +516,14 @@ Game.Screen.playScreen = {
             }    
             if (inputType === 'mousemove') {
                 //reposition the tooltip
+                // console.log(inputData) //position is indeed stored in x and y; why isn't this working?
                 let x = inputData.x;
                 let y = inputData.y;
+                // console.log(`mouse at ${x}, ${y}`) //these work correctly
                 let toolTip = document.getElementById('tooltip');
 
-                toolTip.style.top = y-10;
-                toolTip.style.left = x+15;
+                toolTip.style.top = y-20 + 'px';
+                toolTip.style.left = x+15 + 'px';
 
                 //set these values to be easier to access
                 var mouseCoords = Game._display.eventToPosition(inputData);

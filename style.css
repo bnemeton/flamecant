@@ -6,18 +6,19 @@ body {
 canvas {
     border: 1px dashed white;
     padding: 10px;
+    cursor: help;
 
     
 }
 
 #tooltip {
-    visibility: hidden;
-    /* width: 120px; */
-    background-color: black;
+    display: none;
+    /* width: 250px; */
+    background-color: rgba(0,0,0,0.66);
     color: #fff;
     /* text-align: center; */
     padding: 5px 0;
-    border-radius: 6px;
+    border-radius: 3px;
    
     /* Position the tooltip text - see examples below! */
     position: fixed;
@@ -25,5 +26,6 @@ canvas {
   }
 
   body:hover #tooltip {
-    visibility: visible;
+    display: block;
+    /* border: 1px solid white; */
   }
