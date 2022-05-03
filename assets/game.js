@@ -52,6 +52,7 @@ var Game =  {
         bindEventToScreen('keydown');
         // bindEventToScreen('keyup');
         bindEventToScreen('keypress');
+        bindEventToScreen('mousemove');
     },
     refresh: function() {
         //clear the screen
@@ -117,8 +118,9 @@ window.onload = function() {
     //initialize the game
     Game.init();
     //add the container to the page
-    document.body.appendChild(Game.getDisplay().getContainer())
-    document.body.appendChild(Game.getTextDisplay().getContainer())
+    let mapContainer = document.getElementById('mapContainer')
+    mapContainer.appendChild(Game.getDisplay().getContainer())
+    mapContainer.appendChild(Game.getTextDisplay().getContainer())
     //load start screen
     Game.switchScreen(Game.Screen.startScreen)
 }

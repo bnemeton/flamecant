@@ -6,6 +6,7 @@ class Glyph {
         this._char = properties['char'] || '';
         this._foreground = properties['fg'] || 'white';
         this._background = properties['bg'] || 'black';
+        this.text = properties['text'] || '';
     }
     getChar() {
         return this._char;

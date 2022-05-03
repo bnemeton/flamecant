@@ -331,6 +331,9 @@ Game.Screen.playScreen = {
     _player: null,
     subScreen: null,
     _gameEnded: false,
+    topLeftX: NaN,
+    topLeftY: NaN,
+    visibleCells: {},
     setSubScreen: function(subScreen) {
         this.subScreen = subScreen;
         Game.refresh()
@@ -368,16 +371,16 @@ Game.Screen.playScreen = {
         var screenHeight = Game.getScreenHeight();
         // console.log('got screen dimensions!')
         // Make sure the x-axis doesn't go to the left of the left bound
-        var topLeftX = Math.max(0, this._player.getX() - (screenWidth / 2));
+        this.topLeftX = Math.max(0, this._player.getX() - (screenWidth / 2));
         // Make sure we still have enough space to fit an entire game screen
-        topLeftX = Math.min(topLeftX, this._map.getWidth() - screenWidth);
+        this.topLeftX = Math.min(this.topLeftX, this._map.getWidth() - screenWidth);
         // Make sure the y-axis doesn't above the top bound
-        var topLeftY = Math.max(0, this._player.getY() - (screenHeight / 2));
+        this.topLeftY = Math.max(0, this._player.getY() - (screenHeight / 2));
         // Make sure we still have enough space to fit an entire game screen
-        topLeftY = Math.min(topLeftY, this._map.getHeight() - screenHeight);
+        this.topLeftY = Math.min(this.topLeftY, this._map.getHeight() - screenHeight);
 
         //track which cells are visible
-        var visibleCells = {};
+        var visibleCells = this.visibleCells;
         //find them and add to object
         // console.log(this._player.getZ())
         // console.log(this._map.getFOV(this._player.getZ())) //undefined...? no now it's not but it isn't working right. no it's undefined again
@@ -391,6 +394,7 @@ Game.Screen.playScreen = {
                 // Mark cell as explored
                 map.setExplored(x, y, currentDepth, true);
             });
+        this.visibleCells = visibleCells;
         // console.log(visibleCells);
 
         // Iterate through all visible map cells
@@ -412,8 +416,8 @@ Game.Screen.playScreen = {
         // }
 
           // Render the explored map cells
-        for (var x = topLeftX; x < topLeftX + screenWidth; x++) {
-            for (var y = topLeftY; y < topLeftY + screenHeight; y++) {
+        for (var x = this.topLeftX; x < this.topLeftX + screenWidth; x++) {
+            for (var y = this.topLeftY; y < this.topLeftY + screenHeight; y++) {
                 if (this._map.isExplored(x, y, currentDepth)) {
                     // Fetch the glyph for the tile and render it to the screen
                     // at the offset position.
@@ -428,9 +432,9 @@ Game.Screen.playScreen = {
                         // If we have items, we want to render the top most item
                         // console.log(items)
                         if (items.length > 0) {
-                            console.log('there should be visible items...')
+                            // console.log('there should be visible items...')
                             glyph = items[items.length - 1];
-                            console.log(`here's the ${glyph.name}'s foreground color: ${glyph._foreground}`)
+                            // console.log(`here's the ${glyph.name}'s foreground color: ${glyph._foreground}`)
                         }
                         // Check if we have an entity at the position
                         if (this._map.getEntityAt(x, y, currentDepth)) {
@@ -446,8 +450,8 @@ Game.Screen.playScreen = {
                         foreground = 'darkslategrey';
                     }
                     displays.main.draw(
-                        x - topLeftX,
-                        y - topLeftY,
+                        x - this.topLeftX,
+                        y - this.topLeftY,
                         glyph.getChar(), 
                         foreground, 
                         glyph.getBackground());
@@ -509,7 +513,66 @@ Game.Screen.playScreen = {
             if (this.subScreen) {
                 this.subScreen.handleInput(inputType, inputData);
                 return;
-            }        
+            }    
+            if (inputType === 'mousemove') {
+                //reposition the tooltip
+                let x = inputData.x;
+                let y = inputData.y;
+                let toolTip = document.getElementById('tooltip');
+
+                toolTip.style.top = y-10;
+                toolTip.style.left = x+15;
+
+                //set these values to be easier to access
+                var mouseCoords = Game._display.eventToPosition(inputData);
+                var actualX = mouseCoords[0]+this.topLeftX;
+                var actualY = mouseCoords[1]+this.topLeftY;
+                
+                // console.log(mouseCoords);
+                // Game.message(`mouse coordinates: ${mouseCoords}`)
+                // let splitCoords = mouseCoords.split(','); //whoops duh mouseCoords actually an array lmao
+                let currentDepth = this._player.getZ();
+                let text ='';
+                // if(this._map.isExplored(mouseCoords[0],mouseCoords[1],currentDepth)) { //checking visible is better imo
+                //     text = this._map.getTile(mouseCoords[0]+this.topLeftX,mouseCoords[1]+this.topLeftY,currentDepth).text
+                // }
+                // console.log(this.visibleCells);
+                // console.log(`the tooltip text condition should be:`)
+                // console.log(this.visibleCells[`${mouseCoords[0],mouseCoords[1]}`]) //returns undefined
+
+                if (this.visibleCells[`${actualX},${actualY}`]) {
+                    text = this._map.getTile(actualX,actualY,currentDepth).text;
+                   
+                    if (this._map.getEntityAt(actualX,actualY,currentDepth)) {
+                        text = `There is a ${this._map.getEntityAt(actualX,actualY, currentDepth).name} here.`
+
+                        if (this._map.getEntityAt(actualX,actualY, currentDepth).name === 'branded') {
+                            text += ` It's you.`
+                        }
+                    }
+                    
+                    items = this._map.getItemsAt(actualX,actualY,currentDepth);
+
+                    if (items.length >0) {
+                        if (items.length === 1) {
+                            text += ` There is also a(n) ${items[0].name} here.`
+                        } else {
+                            text += ` There are also some items here.`
+                        }
+                    }
+
+                }
+
+                let toolTipText = text
+                // let toolTip = document.getElementById('tooltip'); //now this is declared up in repositioning
+                toolTip.innerHTML = toolTipText;
+                // toolTip.classList.add("tooltiptext")
+
+
+                // inputData.target.appendChild(toolTip)
+
+                Game.refresh();
+            }    
             if (inputType === 'keydown') {
             // If enter is pressed, go to the win screen
             // If escape is pressed, go to lose screen
