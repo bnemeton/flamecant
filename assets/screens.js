@@ -604,14 +604,17 @@ Game.Screen.playScreen = {
                 case ROT.KEYS.VK_ESCAPE:
                     Game.switchScreen(Game.Screen.loseScreen);
                     break;
+                case ROT.KEYS.VK_S:
                 case ROT.KEYS.VK_NUMPAD5:
                     //stay put for one turn
                     this.move(0, 0, 0);
+                    Game.message("You wait one turn.")
                     //refresh screen
                     // Game.refresh();
                     // Unlock the engine
                     this._map.getEngine().unlock();
                     break;
+                case ROT.KEYS.VK_W:
                 case ROT.KEYS.VK_NUMPAD8:
                     this.move(0,-1, 0); //move
                     //refresh screen
@@ -619,6 +622,7 @@ Game.Screen.playScreen = {
                     // Unlock the engine
                     this._map.getEngine().unlock();
                     break;
+                case ROT.KEYS.VK_E:
                 case ROT.KEYS.VK_NUMPAD9:
                     this.move(1, -1, 0); //move
                     //refresh screen
@@ -626,6 +630,7 @@ Game.Screen.playScreen = {
                     // Unlock the engine
                     this._map.getEngine().unlock();
                     break;
+                case ROT.KEYS.VK_D:
                 case ROT.KEYS.VK_NUMPAD6:
                     this.move(1, 0, 0); //move
                     //refresh screen
@@ -633,6 +638,7 @@ Game.Screen.playScreen = {
                     // Unlock the engine
                     this._map.getEngine().unlock();
                     break;
+                case ROT.KEYS.VK_C:
                 case ROT.KEYS.VK_NUMPAD3:
                     this.move(1, 1, 0); //move
                     //refresh screen
@@ -640,6 +646,7 @@ Game.Screen.playScreen = {
                     // Unlock the engine
                     this._map.getEngine().unlock();
                     break;
+                case ROT.KEYS.VK_X:
                 case ROT.KEYS.VK_NUMPAD2:
                     this.move(0, 1, 0); //move
                     //refresh screen
@@ -647,6 +654,7 @@ Game.Screen.playScreen = {
                     // Unlock the engine
                     this._map.getEngine().unlock();
                     break;
+                case ROT.KEYS.VK_Z:
                 case ROT.KEYS.VK_NUMPAD1:
                     this.move(-1, 1, 0); //move
                     //refresh screen
@@ -654,6 +662,7 @@ Game.Screen.playScreen = {
                     // Unlock the engine
                     this._map.getEngine().unlock();
                     break;
+                case ROT.KEYS.VK_A:
                 case ROT.KEYS.VK_NUMPAD4:
                     this.move(-1, 0, 0); //move
                     //refresh screen
@@ -661,6 +670,7 @@ Game.Screen.playScreen = {
                     // Unlock the engine
                     this._map.getEngine().unlock();
                     break;
+                case ROT.KEYS.VK_Q:
                 case ROT.KEYS.VK_NUMPAD7:
                     this.move(-1, -1, 0); //move
                     //refresh screen
