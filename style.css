@@ -6,7 +6,7 @@ body {
 canvas {
     border: 1px dashed white;
     padding: 10px;
-    cursor: help;
+    /* cursor: help; */
 
     
 }

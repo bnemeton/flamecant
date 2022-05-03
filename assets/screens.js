@@ -577,8 +577,10 @@ Game.Screen.playScreen = {
                 // let toolTip = document.getElementById('tooltip'); //now this is declared up in repositioning
                 if (toolTipText.length > 0) {
                     toolTip.style.display = "block"
+                    document.body.style.cursor = "crosshair"
                 } else {
                     toolTip.style.display = "none"
+                    document.body.style.cursor = "auto"
                 }
                 toolTip.innerHTML = toolTipText;
                 // toolTip.classList.add("tooltiptext")
