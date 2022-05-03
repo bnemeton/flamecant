@@ -23,7 +23,7 @@ class Map {
         //add the player
         this.addEntityAtRandomPosition(player, 0);
         //add enemies
-        var enemyTypes = [Fungus];
+        var enemyTypes = [Fungus, StarvelingSwarm];
         for (var z=0; z<this._depth; z++){
             for (var i=0; i < 20; i++) {
                 var RandomEnemy = enemyTypes[Math.floor(Math.random()*enemyTypes.length)]

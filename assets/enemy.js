@@ -9,7 +9,7 @@ class Enemy extends Entity {
         this.bagSlots = properties['bagSlots'] || 5;
         this.attacker = properties['attacker'] || true;
         this.corpseRate = properties['corpseRate'] || 0;
-        this.foes = properties['foes'] || [];
+        this.foes = properties['foes'] || ['branded'];
         
     }
     attack(target) {
@@ -79,7 +79,7 @@ class Enemy extends Entity {
             // console.log('waiting one turn.');
             return true;
         }
-        if (this.attacker && target.name === 'player') { //removed some conditions to try to get shamblers to attack... this allows enemies to attack one another
+        if (this.attacker && (this.foes.includes[target.name])) { //removed some conditions to try to get shamblers to attack... this allows enemies to attack one another
             // console.log(`${this.name} targeting ${target.name}`)
             this.attack(target);
             // console.log(`${this.name} attacked ${target.name}!`)
@@ -217,5 +217,44 @@ class Shambler extends Enemy {
         } else {
             this.tryMove(this.getX(), this.getY() + moveOffset, this.getZ());
         }
+    }
+}
+
+class StarvelingSwarm extends Enemy {
+    constructor() {
+        super({
+            char: '⁂',
+            fg: 'wheat',
+            corpseRate: 0,
+            text: "A swarm of ravenous moths. They will devour all they find, be it flesh or fungus.",
+            name: "starveling swarm",
+            actor: true,
+            mortal: true,
+            damage: 1,
+            armor: 1,
+            luck: 0.5,
+            bagSlots: 0,
+            foes: ['branded', 'fungus', 'shambler'],
+            hp: 5
+        })
+        this.swarmCount = 5;
+        this.hunger = 0;
+    }
+    act() {
+        let xOffset = Math.floor(Math.random()*4)-2;
+        let yOffset = Math.floor(Math.random()*4)-2;
+        this.tryMove(this.getX()+xOffset, this.getY()+yOffset, this.getZ());
+        this.hunger++;
+        if (this.hunger > 10) {
+            if (Math.random() < (this.hunger-10)*0.1) {
+                this.swarmCount--;
+                this.hunger = 0;
+            }
+            if (this.swarmCount === 0) {
+                this._map.removeEntity(this)
+                Game.message("A swarm consumes itself, leaving nothing behind.")
+            }
+        }
+        
     }
 }
