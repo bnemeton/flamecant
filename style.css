@@ -13,11 +13,11 @@ canvas {
 
 #tooltip {
     display: none;
-    /* width: 250px; */
+    width: 200px;
     background-color: rgba(0,0,0,0.66);
     color: #fff;
     /* text-align: center; */
-    padding: 5px 0;
+    padding: 3px;
     border-radius: 3px;
    
     /* Position the tooltip text - see examples below! */
@@ -26,6 +26,6 @@ canvas {
   }
 
   body:hover #tooltip {
-    display: block;
-    /* border: 1px solid white; */
+    /* display: block; */
+    border: 1px solid white;
   }

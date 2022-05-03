@@ -516,7 +516,7 @@ Game.Screen.playScreen = {
             }    
             if (inputType === 'mousemove') {
                 //reposition the tooltip
-                // console.log(inputData) //position is indeed stored in x and y; why isn't this working?
+                console.log(inputData) //position is indeed stored in x and y; why isn't this working? //does ROT.Display.eventToPosition(e) care about e.x / e.y or diff props?
                 let x = inputData.x;
                 let y = inputData.y;
                 // console.log(`mouse at ${x}, ${y}`) //these work correctly
@@ -525,8 +525,16 @@ Game.Screen.playScreen = {
                 toolTip.style.top = y-20 + 'px';
                 toolTip.style.left = x+15 + 'px';
 
+                let dummyData = {
+                    // x: inputData.x - 5,
+                    // y: inputData.y - 5,
+                    // screenX: inputData.x - 5,
+                    // screenY: inputData.y - 5,
+                    clientX: inputData.x, //only actually need these apparently! also wait i adjusted these forever and set them back to default. what.
+                    clientY: inputData.y
+                }
                 //set these values to be easier to access
-                var mouseCoords = Game._display.eventToPosition(inputData);
+                var mouseCoords = Game._display.eventToPosition(dummyData);
                 var actualX = mouseCoords[0]+this.topLeftX;
                 var actualY = mouseCoords[1]+this.topLeftY;
                 
@@ -567,13 +575,18 @@ Game.Screen.playScreen = {
 
                 let toolTipText = text
                 // let toolTip = document.getElementById('tooltip'); //now this is declared up in repositioning
+                if (toolTipText.length > 0) {
+                    toolTip.style.display = "block"
+                } else {
+                    toolTip.style.display = "none"
+                }
                 toolTip.innerHTML = toolTipText;
                 // toolTip.classList.add("tooltiptext")
 
 
                 // inputData.target.appendChild(toolTip)
 
-                Game.refresh();
+                // Game.refresh(); //CSS tooltips make this unnecessary
             }    
             if (inputType === 'keydown') {
             // If enter is pressed, go to the win screen
