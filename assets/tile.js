@@ -7,6 +7,7 @@ class Tile extends Glyph{
     this.isWalkable = properties['isWalkable'] || false;
     this.isDiggable = properties['isDiggable'] || false;
     this.isOpaque = properties['isOpaque'] || false;
+    
  }
 };
 
@@ -15,7 +16,8 @@ class FloorTile extends Tile {
         super({
             char: '.',
             fg: 'darkslategrey',
-            isWalkable: true
+            isWalkable: true,
+            text: 'This is open floor.'
         });
         // this.char = '.'
         // this.fg = 'darkslategrey';
@@ -29,7 +31,8 @@ class WallTile extends Tile {
             char: '#',
             fg: 'peachpuff',
             isDiggable: true,
-            isOpaque: true
+            isOpaque: true,
+            text: "This is a wall of solid stone. You can currently dig through these, for some reason."
         });
         // this.isOpaque = true;
         // this.char = '#',
@@ -49,7 +52,8 @@ class StairDown extends Tile {
         super({
             char: '<',
             fg: 'white',
-            isWalkable: true
+            isWalkable: true,
+            text: "There is a staircase descending to a lower floor here."
         })
     }
 }
@@ -59,7 +63,8 @@ class StairUp extends Tile {
         super({
             char: '>',
             fg: 'white',
-            isWalkable: true
+            isWalkable: true,
+            text: "There is a staircase ascending to an upper floor here."
         })
     }
 }
