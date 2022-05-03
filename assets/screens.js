@@ -334,6 +334,10 @@ Game.Screen.playScreen = {
     topLeftX: NaN,
     topLeftY: NaN,
     visibleCells: {},
+    highlightedTile: {
+        x: -1,
+        y:-1
+    },
     setSubScreen: function(subScreen) {
         this.subScreen = subScreen;
         Game.refresh()
@@ -424,6 +428,7 @@ Game.Screen.playScreen = {
                     // at the offset position.
                     var glyph = this._map.getTile(x, y, currentDepth);
                     var foreground = glyph.getForeground();
+                    var background = glyph.getBackground();
                     // If we are at a cell that is in the field of vision, we need
                     // to check if there are items or entities.
                     if (visibleCells[x + ',' + y]) {
@@ -444,18 +449,24 @@ Game.Screen.playScreen = {
                         // Update the foreground color in case our glyph changed
                         // console.log(`here's the glyph's foreground: ${glyph._foreground}`) // getForeground() ""not a function""
                         foreground = glyph.getForeground(); //not a function...?
+                        background = glyph.getBackground();
                     } else {
                         // Since the tile was previously explored but is not 
                         // visible, we want to change the foreground color to
                         // dark gray.
                         foreground = 'darkslategrey';
                     }
+                    if (this.highlightedTile.x === x && this.highlightedTile.y === y) {
+                        console.log(`rendering selected tile at ${glyph.x},${glyph.y}`)
+                        background = 'darkslategrey'
+                    }
+                    // console.log(`highlighted tile SHOULD be ${this.highlightedTile.x}, ${this.highlightedTile.y}`)
                     displays.main.draw(
                         x - this.topLeftX,
                         y - this.topLeftY,
                         glyph.getChar(), 
                         foreground, 
-                        glyph.getBackground());
+                        background)
                 }
             }
         }
@@ -552,7 +563,12 @@ Game.Screen.playScreen = {
                 // console.log(this.visibleCells[`${mouseCoords[0],mouseCoords[1]}`]) //returns undefined
 
                 if (this.visibleCells[`${actualX},${actualY}`]) {
-                    text = this._map.getTile(actualX,actualY,currentDepth).text;
+                    let tile = this._map.getTile(actualX,actualY,currentDepth)
+                    this.highlightedTile = {
+                        x: actualX,
+                        y: actualY
+                    };
+                    text = tile.text;
                    
                     let entity = this._map.getEntityAt(actualX,actualY,currentDepth)
                     if (entity) {
@@ -590,7 +606,7 @@ Game.Screen.playScreen = {
 
                 // inputData.target.appendChild(toolTip)
 
-                // Game.refresh(); //CSS tooltips make this unnecessary
+                Game.refresh(); //CSS tooltips make this unnecessary // hightlightedTile makes it necessary again
             }    
             if (inputType === 'keydown') {
             // If enter is pressed, go to the win screen
