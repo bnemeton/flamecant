@@ -146,6 +146,27 @@ class Fungus extends Enemy {
         // Check if we are going to try growing this turn
         if (this.growthsLeft > 0) {
             if (Math.random() <= 0.02) {
+
+                //on growth attempt, check number of fungi in radius 2; if greater than 8, die and spawn a shambler instead
+                let nearbyGuys = this._map.getEntitiesWithinRadius(this._x, this._y, this._z, 2) // this always returns empty for some reason, entities are never detected
+                // console.log(nearbyGuys) //always returning an empty array, which explains why nothing below is working // lmao passed no radius to get entities etc // nope still returning empty
+                let nearbyFungi = 0;
+                nearbyGuys.forEach(guy => {
+                    if (guy.name === "fungus") {
+                        nearbyFungi++;
+                        console.log('incrementing nearbyFungi...')
+                    }
+                })
+                if (nearbyFungi >= 8) {
+                    let shambler = new Shambler();
+                    shambler.setX(this._x);
+                    shambler.setY(this._y);
+                    shambler.setZ(this._z);
+                    this.getMap().addEntity(shambler);
+                    this.getMap().removeEntity(this);
+                    Game.message("A patch of fungus rises up as a shambler!")
+
+                }
                 // Generate the coordinates of a random adjacent square by
                 // generating an offset between [-1, 0, 1] for both the x and
                 // y directions. To do this, we generate a number from 0-2 and then
@@ -176,7 +197,7 @@ class Fungus extends Enemy {
 class Shambler extends Enemy {
     constructor() {
         super({
-            char: 'S',
+            char: 's',
             fg: 'darkseagreen',
             corpseRate: 50,
             text: "An upright, ambulatory clump of fungus. It seems to take an interest in corpses."

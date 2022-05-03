@@ -347,7 +347,7 @@ Game.Screen.playScreen = {
         // var map = []; //old map array
         var width = 128;
         var height = 64;
-        var depth = 5;
+        var depth = 1;
         //create map from tiles and player
         var tiles = new Builder(width, height, depth).getTiles();
         this._player = new Player();
