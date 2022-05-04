@@ -12,6 +12,7 @@ class Entity extends Glyph{
         this.actor = properties['actor'] || false;
         this.canDig = properties['canDig'] || false;
         this.sight = properties['sight'] || 3;
+        this.smell = properties['smnell'] || 3;
         // this.setX = function(x) {
         //     this._x = x;
         this.bagSlots = properties['bagSlots'] || 10;
@@ -19,7 +20,26 @@ class Entity extends Glyph{
     }
 
     //methods ffs
+    getClosest(array) {
+        let x1 = this._x;
+        let y1 = this._y;
+        let nearest = {};
+        let shortestDist = 10000;
+        for (let i = 0; i < array.length; i++) {
+            let x2 = array[i]._x;
+            let y2 = array[i]._y;
 
+            let dx = x1 - x2;
+            let dy = y1 - y2;
+
+            let distance = Math.sqrt((dx * dx) + (dy * dy))
+            if (distance < shortestDist) {
+                shortestDist = distance;
+                nearest = array[i]
+            }
+        }
+        return nearest;
+    }
     getBag() {
         return this.bag;
     }
@@ -37,6 +57,9 @@ class Entity extends Glyph{
         }
         for (var i = 0; i < this.bag.length; i++) {
             if (!this.bag[i]) {
+                item._x = null;
+                item._y = null;
+                item._z = null;
                 this.bag[i] = item;
                 return true;
             }
@@ -64,6 +87,7 @@ class Entity extends Glyph{
             // Try to add the item. If our inventory is not full, then splice the 
             // item out of the list of items. In order to fetch the right item, we
             // have to offset the number of items already added.
+
             if (this.giveItem(mapItems[indices[i]  - added])) {
                 console.log('picked up a ' + mapItems[indices[i] - added].name)
                 mapItems.splice(indices[i] - added, 1);

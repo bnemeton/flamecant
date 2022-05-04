@@ -6,6 +6,9 @@ class Item extends Glyph {
         this.text = props['text'] || "";
         this.options = props['options'] || ['drop'];
         this.quantity = props['quantity'] || 1;
+        this._x = props['x'] || null;
+        this._y = props['y'] || null;
+        this._z = props['z'] || null;
     }
 
     drop(index) {

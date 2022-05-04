@@ -10,7 +10,80 @@ class Enemy extends Entity {
         this.attacker = properties['attacker'] || true;
         this.corpseRate = properties['corpseRate'] || 0;
         this.foes = properties['foes'] || ['branded'];
+        this.wants = properties['wants'] || [];
+        this.friends = properties["friends"] || [];
+        this.maxSpeed = properties['maxSpeed'] || 1;
         
+    }
+    canSee(entity) {
+        if (!entity || this.getMap() !== entity.getMap() || this.getZ() !== entity.getZ()) {
+            return false;
+        }
+        let otherX = entity.getX();
+        let otherY = entity.getY();
+
+        // If we're not in a square field of view, then we won't be in a real
+        // field of view either.
+        if ((otherX - this._x) * (otherX - this._x) +
+            (otherY - this._y) * (otherY - this._y) >
+            this.sight * this.sight) {
+            return false;
+        }
+        let found = false;
+        this.getMap().getFOV(this.getZ()).compute(
+            this.getX(), this.getY(), this.sight,
+            function(x, y, radius, visibility) {
+                if (x === otherX && y === otherY) {
+                    found = true;
+                }
+            }
+        )
+        return found;
+
+
+    }
+    lookout(type) {
+        let results = [];
+        let nearbyThings = [];
+        switch(type){
+            case "foes": 
+                nearbyThings = this._map.getEntitiesWithinRadius(this._x, this._y, this._z, this.sight);
+                results = nearbyThings.filter(guy => 
+                    this.canSee(guy) && this.foes.includes(guy.name)
+                )
+                break;
+            case "wants":
+                nearbyThings = this._map.getItemsWithinRadius(this._x, this._y, this._z, this.smell);
+                results = nearbyThings.filter(item => this.wants.includes(item.name))
+                break;
+            case "friends":
+                nearbyThings = this._map.getEntitiesWithinRadius(this._x, this._y, this._z, this.sight);
+                results = nearbyThings.filter(guy => this.friends.includes(guy.name))
+                break;
+        }
+        return results;
+    }
+    seek(target) {
+        // console.log(target); //why is it seeking an empty target?
+        // console.log(this); //why is map undefined when checked on line 71? it's defined correctly here
+        let thisEnemy = this;
+        let z = this._z;
+        let path = new ROT.Path.AStar(target._x, target._y, function (x, y) {
+            // console.log(thisEnemy) //ah this is not callable within functions or whatever, sure
+            let entity = thisEnemy._map.getEntityAt(x, y, z);
+            if (entity && entity !== target & entity !== thisEnemy) {
+                return false;
+            }
+            // console.log(`coords: ${x}, ${y}, ${z}`)
+            return thisEnemy._map.getTile(x, y, z).isWalkable;
+        }, {topology: 4});
+        let count = 0;
+        path.compute(thisEnemy._x, thisEnemy._y, function (x, y) {
+            if (count === 1) {
+                thisEnemy.tryMove( x, y, z)
+            }
+            count++;
+        });
     }
     attack(target) {
         console.log(`enemy attacking/targeting ${target.name}`)
@@ -38,7 +111,9 @@ class Enemy extends Entity {
         this.hp -= damage - this.armor;
         console.log(`${this.name} has ${this.hp} hp remaining...`)
         if (this.hp <= 0) {
-            this.tryDropCorpse();
+            if (this.corpseRate > 0) {
+                this.tryDropCorpse();
+            }
             // console.log(`attempting to remove a ${this.name}...`)
             this.getMap().removeEntity(this);
             Game.message(`The ${this.name} dies!`)
@@ -134,7 +209,8 @@ class Fungus extends Enemy {
             fg: pickedColor,
             attacker: true,
             corpseRate: 50,
-            text: "A thick sheet, it carpets the floor of the cave. Every so often, you catch it twitching in the corner of your eye."
+            text: "A thick sheet, it carpets the floor of the cave. Every so often, you catch it twitching in the corner of your eye.",
+            sight: 2
         })
         this.name = 'fungus'
         this.hp = 3;
@@ -148,7 +224,7 @@ class Fungus extends Enemy {
             if (Math.random() <= 0.02) {
 
                 //on growth attempt, check number of fungi in radius 2; if greater than 8, die and spawn a shambler instead
-                let nearbyGuys = this._map.getEntitiesWithinRadius(this._x, this._y, this._z, 2) // this always returns empty for some reason, entities are never detected
+                let nearbyGuys = this._map.getEntitiesWithinRadius(this._x, this._y, this._z, this.sight) // this always returns empty for some reason, entities are never detected
                 // console.log(nearbyGuys) //always returning an empty array, which explains why nothing below is working // lmao passed no radius to get entities etc // nope still returning empty
                 let nearbyFungi = 0;
                 nearbyGuys.forEach(guy => {
@@ -200,15 +276,18 @@ class Shambler extends Enemy {
             char: 's',
             fg: 'darkseagreen',
             corpseRate: 50,
-            text: "An upright, ambulatory clump of fungus. It seems to take an interest in corpses."
+            text: "An upright, ambulatory clump of fungus. It seems to take an interest in corpses.",
+            smell: 10,
+            friends: ["fungus"]
         })
         this.name = 'shambler'
         this.hp = 5;
         this.damage = 1;
+        this.burdened = false;
     }
 
-    act() {
-        // this.tryMove(this.getX(), this.getY(), this.getZ()) //stand still
+    wander() {
+         // this.tryMove(this.getX(), this.getY(), this.getZ()) //stand still
         // Flip coin to determine if moving by 1 in the positive or negative direction
         var moveOffset = (Math.round(Math.random()) === 1) ? 1 : -1;
         // Flip coin to determine if moving in x direction or y direction
@@ -217,6 +296,33 @@ class Shambler extends Enemy {
         } else {
             this.tryMove(this.getX(), this.getY() + moveOffset, this.getZ());
         }
+    }
+    act() {
+        if (this._map.getItemsAt(this._x, this._y, this._z) > 0) {
+            let items = this._map.getItemsAt(this._x, this._y, this._z)
+            let indices = [];
+            for (let i = 0; i < items.length; i++) {
+                if (this.wants.includes(items[i].name)) {
+                    indices.push(i);
+                }
+            }
+            this.pickupItems(indices);
+            return;
+        }
+        if (this.burdened && this.lookout("friends")) {
+            let nearbyFriends = this.lookout("friends");
+            let closestFriend = this.getClosest(nearbyFriends)
+            seek(closestFriend) // to be implemented
+            return;
+        }
+       if (this.lookout("wants")) {
+            let nearbyWants = this.lookout("wants");
+            let closestWant = this.getClosest(nearbyWants)
+           this.seek(closestWant) // to be implemented
+           return;
+       } else {
+           this.wander()
+       }
     }
 }
 
@@ -235,26 +341,62 @@ class StarvelingSwarm extends Enemy {
             luck: 0.5,
             bagSlots: 0,
             foes: ['branded', 'fungus', 'shambler'],
-            hp: 5
+            hp: 5,
+            sight: 12,
+            smell: 12,
+            maxSpeed: 2
         })
         this.swarmCount = 5;
         this.hunger = 0;
     }
-    act() {
+    
+    eat() {
+
+    }
+
+    wander() {
         let xOffset = Math.floor(Math.random()*4)-2;
         let yOffset = Math.floor(Math.random()*4)-2;
         this.tryMove(this.getX()+xOffset, this.getY()+yOffset, this.getZ());
+    }
+
+    act() {
+        //always hungry++
         this.hunger++;
+        //if sufficiently hungry, chance of eating a swarmCount to reset hunger, 5% per point of hunger above the threshold
         if (this.hunger > 10) {
-            if (Math.random() < (this.hunger-10)*0.1) {
+            if (Math.random() < (this.hunger-10)*0.05) {
                 this.swarmCount--;
                 this.hunger = 0;
             }
+            //if swarmCount reduced to zero, despawn
             if (this.swarmCount === 0) {
                 this._map.removeEntity(this)
                 Game.message("A swarm consumes itself, leaving nothing behind.")
             }
         }
+
+        if (this.lookout("wants") > 0) {
+            let nearbyWants = this.lookout("wants");
+            let closestWant = this.getClosest(nearbyWants)
+            this.seek(closestWant)
+            return;
+        }
+        if (this.lookout("foes").length > 0) {
+            let nearbyFoes = this.lookout("foes");
+            let closestFoe = this.getClosest(nearbyFoes)
+            var offsets = Math.abs(closestFoe.getX() - this.getX()) + 
+            Math.abs(closestFoe.getY() - this.getY());
+                if (offsets === 1) {
+                    if (this.attacker) {
+                    this.eat(closestFoe);
+                    return;
+                }
+            }
+            this.seek(closestFoe)
+            return;
+        }
+
         
     }
 

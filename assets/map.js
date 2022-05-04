@@ -71,6 +71,9 @@ class Map {
     }
     addItem(x, y, z, item) {
         var key = `${x},${y},${z}`;
+        item._x = x;
+        item._y = y;
+        item._z = z;
         if (this._items[key]) {
             this._items[key].push(item);
         } else {
@@ -229,6 +232,38 @@ class Map {
         // console.log('adding entity at new position')
         this._entities[key] = entity;
     };
+
+    getItemsWithinRadius(centerX, centerY, centerZ, radius) {
+        let results = [];
+        // Determine our bounds
+        var leftX = centerX - radius;
+        var rightX = centerX + radius;
+        var topY = centerY - radius;
+        var bottomY = centerY + radius;
+        let counted = 0;
+        // Iterate through our entities, adding any which are within the bounds
+        for (var key in this._items) {
+            // console.log(entity) // what exactly is this iterating over? oh it's the key. but that wasn't working before either...
+            let item = this._items[key]
+           
+            let itemCoords = key.split(',')
+            let itemX = itemCoords[0]
+            let itemY = itemCoords[1]
+            let itemZ = itemCoords[2]
+
+            if (itemX >= leftX && itemX <= rightX && //entity.getX() isn't a function...? // bc entity was the key, addressed that
+            itemY >= topY && itemY <= bottomY &&
+            itemZ === centerZ) {
+                console.log(item.name+' detected!') // never fires???
+                results.push(item);
+            }
+            counted++
+        }
+        // console.log(`${counted} entities counted, ${results.length} results!`) // counted increases as fungi spawn, but results.length is always zero. aaaaaaa
+        // console.log(results) // always empty array... even though things *are* getting stored in the _entities object and can be retrieved just fine. baffling.
+        return results;
+    }
+
     getEntitiesWithinRadius(centerX, centerY, centerZ, radius) {
         let results = [];
         // Determine our bounds
@@ -263,7 +298,7 @@ class Map {
             }
             counted++
         }
-        console.log(`${counted} entities counted, ${results.length} results!`) // counted increases as fungi spawn, but results.length is always zero. aaaaaaa
+        // console.log(`${counted} entities counted, ${results.length} results!`) // counted increases as fungi spawn, but results.length is always zero. aaaaaaa
         // console.log(results) // always empty array... even though things *are* getting stored in the _entities object and can be retrieved just fine. baffling.
         return results;
     }
