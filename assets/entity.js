@@ -90,10 +90,17 @@ class Entity extends Glyph{
                 this._map.addItem(this.getX(), this.getY(), this.getZ(), this.bag[index]);
             }
             Game.message(`You put down the ${this.bag[index].name}.`)  
-            this.removeItem(index);    
+            if (this.bag[index].quantity > 1) {
+                this.bag[index].quantity--
+                return true;
+            } else {
+                this.removeItem(index);
+                return true;
+            }
         }
         //no such item in bag??
         console.log(`${index} has no item in this bag, apparently`)
+        return false;
     }
 
     getSightRadius() {
