@@ -257,4 +257,5 @@ class StarvelingSwarm extends Enemy {
         }
         
     }
+
 }

@@ -5,6 +5,7 @@ class Item extends Glyph {
         this.name = props['name'] || "";
         this.text = props['text'] || "";
         this.options = props['options'] || ['drop'];
+        this.quantity = props['quantity'] || 1;
     }
 
     drop(index) {

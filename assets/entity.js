@@ -27,6 +27,14 @@ class Entity extends Glyph{
         return this.bag[index];
     }
     giveItem(item) {
+        for (var i=0; i<this.bag.length; i++) {
+            if (this.bag[i]) {
+                    if (this.bag[i].name === item.name) {
+                    this.bag[i].quantity++
+                    return true;
+                }
+            }
+        }
         for (var i = 0; i < this.bag.length; i++) {
             if (!this.bag[i]) {
                 this.bag[i] = item;

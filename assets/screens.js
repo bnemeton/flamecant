@@ -270,7 +270,7 @@ class ItemListScreen {
                 var selectionState = (this.selectable && this.multiselect &&
                     this.selectedIndices.includes(i)) ? '+' : '-';
                 // Render at the correct row and add 2.
-                display.drawText(this.indent, this.top + 2 + row, letter + ' ' + selectionState + ' ' + this.items[i].name);
+                display.drawText(this.indent, this.top + 2 + row, letter + ' ' + selectionState + ' ' + this.items[i].quantity + ' ' + this.items[i].name);
                 row++;
             }
         }
