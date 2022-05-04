@@ -42,7 +42,7 @@ Game.Screen.startScreen = {
                                             QoL features!
                                             `)
         displays.text.drawText(0, 0, ashColor + `
-        You were perhaps a scholar--in one way or another you came upon the knowledge that in a certain place, a community of disciples of fire magic had long ago gathered together to pool their discoveries and attain deeper mystical understanding of fire. This community they founded, this cenobium of fire, sought ever-deeper the mysteries of the flame. But that was long ago, and their existence is known but to a few--most of these stay away, but you have felt in your heart the pull, the draw, of the fire--in the terms of the cenobium's own mysteries, you are a moth--and like a moth, you have been drawn in... You descended into the caves leading to the cloistered community, but the path ahead is less certain. 
+        You were perhaps a scholar--in one way or another you came upon the knowledge that in a certain place, a community of disciples of fire magic had long ago gathered together to pool their discoveries and attain deeper mystical understanding of fire. This community they founded, this cenobium of fire, sought ever-deeper the mysteries of the flame. But that was long ago, and their existence is known but to a few--most of these stay away. You descended into the caves leading to the cloistered community, but the path ahead is less certain. 
         
         Message log will appear here.`)
     },
