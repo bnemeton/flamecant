@@ -244,23 +244,34 @@ class Map {
         // Iterate through our entities, adding any which are within the bounds
         for (var key in this._items) {
             // console.log(entity) // what exactly is this iterating over? oh it's the key. but that wasn't working before either...
-            let item = this._items[key]
+            // console.log(this._items) //oops forgot each entry in _items is an array of the items there, not just the item!
+            let tileWithItems = this._items[key]
+            let item = tileWithItems[0];
+
            
-            let itemCoords = key.split(',')
-            let itemX = itemCoords[0]
-            let itemY = itemCoords[1]
-            let itemZ = itemCoords[2]
+            // console.log(`checking an ${item.name}`)
+            // let itemCoords = key.split(',')
+            // let itemX = itemCoords[0]
+            // let itemY = itemCoords[1]
+            // let itemZ = itemCoords[2]
+
+            let itemX = item._x; // these are all undefined for some reason...
+            let itemY = item._y;
+            let itemZ = item._z
+            
+            // console.log(`checking the item at ${itemX}, ${itemY} on floor ${itemZ}`)
 
             if (itemX >= leftX && itemX <= rightX && //entity.getX() isn't a function...? // bc entity was the key, addressed that
             itemY >= topY && itemY <= bottomY &&
             itemZ === centerZ) {
-                console.log(item.name+' detected!') // never fires???
+                // console.log(item.name+' detected!') // never fires???
                 results.push(item);
             }
             counted++
         }
         // console.log(`${counted} entities counted, ${results.length} results!`) // counted increases as fungi spawn, but results.length is always zero. aaaaaaa
         // console.log(results) // always empty array... even though things *are* getting stored in the _entities object and can be retrieved just fine. baffling.
+        console.log(`counted ${counted} items, found ${results.length} nearby`)
         return results;
     }
 

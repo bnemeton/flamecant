@@ -54,6 +54,7 @@ class Enemy extends Entity {
                 break;
             case "wants":
                 nearbyThings = this._map.getItemsWithinRadius(this._x, this._y, this._z, this.smell);
+                console.log(`${this.name} smells ${nearbyThings.length} items nearby...`)
                 results = nearbyThings.filter(item => this.wants.includes(item.name))
                 break;
             case "friends":
@@ -74,7 +75,8 @@ class Enemy extends Entity {
             if (entity && entity !== target & entity !== thisEnemy) {
                 return false;
             }
-            // console.log(`coords: ${x}, ${y}, ${z}`)
+            console.log(`enemy ${thisEnemy.name} at ${thisEnemy._x}, ${thisEnemy._y} trying to path to ${target.name} at:`)
+            console.log(`coords: ${x}, ${y}, ${z}`)
             return thisEnemy._map.getTile(x, y, z).isWalkable;
         }, {topology: 4});
         let count = 0;
@@ -230,7 +232,7 @@ class Fungus extends Enemy {
                 nearbyGuys.forEach(guy => {
                     if (guy.name === "fungus") {
                         nearbyFungi++;
-                        console.log('incrementing nearbyFungi...')
+                        // console.log('incrementing nearbyFungi...')
                     }
                 })
                 if (nearbyFungi >= 8) {
@@ -284,6 +286,11 @@ class Shambler extends Enemy {
         this.hp = 5;
         this.damage = 1;
         this.burdened = false;
+        this.wants = [
+            "fungus remains",
+            "shambler remains",
+            "mossmuncher remains"
+        ]
     }
 
     wander() {
@@ -298,7 +305,8 @@ class Shambler extends Enemy {
         }
     }
     act() {
-        if (this._map.getItemsAt(this._x, this._y, this._z) > 0) {
+        if (this._map.getItemsAt(this._x, this._y, this._z).length > 0) {
+            console.log(`a shambler notices some items in its tile...`)
             let items = this._map.getItemsAt(this._x, this._y, this._z)
             let indices = [];
             for (let i = 0; i < items.length; i++) {
@@ -307,18 +315,21 @@ class Shambler extends Enemy {
                 }
             }
             this.pickupItems(indices);
+            Game.message(`A shambler picks something up.`)
+            this.burdened = true;
             return;
         }
-        if (this.burdened && this.lookout("friends")) {
+        if (this.burdened && this.lookout("friends").length > 0) {
             let nearbyFriends = this.lookout("friends");
             let closestFriend = this.getClosest(nearbyFriends)
             seek(closestFriend) // to be implemented
             return;
         }
-       if (this.lookout("wants")) {
+       if (this.lookout("wants").length > 0) {
             let nearbyWants = this.lookout("wants");
+            console.log(`shambler at ${this._x}, ${this._y} smells ${nearbyWants.length} things it wants`)
             let closestWant = this.getClosest(nearbyWants)
-           this.seek(closestWant) // to be implemented
+           this.seek(closestWant) // seeking undefined
            return;
        } else {
            this.wander()
@@ -376,7 +387,7 @@ class StarvelingSwarm extends Enemy {
             }
         }
 
-        if (this.lookout("wants") > 0) {
+        if (this.lookout("wants").length > 0) {
             let nearbyWants = this.lookout("wants");
             let closestWant = this.getClosest(nearbyWants)
             this.seek(closestWant)
@@ -393,8 +404,10 @@ class StarvelingSwarm extends Enemy {
                     return;
                 }
             }
-            this.seek(closestFoe)
+            this.seek(closestFoe) // was seeking undefined target?
             return;
+        } else {
+            this.wander();
         }
 
         
