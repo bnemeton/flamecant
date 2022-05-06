@@ -361,8 +361,29 @@ class StarvelingSwarm extends Enemy {
         this.hunger = 0;
     }
     
-    eat() {
-
+    eat(target) {
+        if (target instanceof Entity) {
+            this.attack(target);
+            let netDamage = this.damage - target.armor;
+            if (netDamage > 0) {
+                this.hp += netDamage;
+                this.hunger -= netDamage * 10;
+                Game.message(`The swarm gnaws at flesh, gaining ${netDamage} hit points!`)
+            }
+        }
+        if (target instanceof Item) {
+            let items = this._map.getItemsAt(target._x, target._y, target._z);
+            let eaten = 0;
+            for (let i=0; i < items.length; i++) {
+                if (items[i] instanceof Corpse) {
+                    items.splice(indices[i] - eaten, 1);
+                    eaten++;
+                    this.hunger -= 15
+                }
+            }
+            Game.message(`A swarm consumed ${eaten} corpses!`)
+            this._map.setItemsAt(target._x, target._y, target._z, items)
+        }
     }
 
     wander() {
@@ -372,6 +393,35 @@ class StarvelingSwarm extends Enemy {
     }
 
     act() {
+        // if below -10 hunger, spawn a new adjacent swarm until  we are above -10
+        if (this.hunger < -10) {
+            do {
+                // Generate the coordinates of a random adjacent square by
+                // generating an offset between [-1, 0, 1] for both the x and
+                // y directions. To do this, we generate a number from 0-2 and then
+                // subtract 1.
+                var xOffset = Math.floor(Math.random() * 3) - 1;
+                var yOffset = Math.floor(Math.random() * 3) - 1;
+                // Make sure we aren't trying to spawn on the same tile as us
+                if (xOffset != 0 || yOffset != 0) {
+                    // Check if we can actually spawn at that location, and if so
+                    // then we grow!
+                    if (this.getMap().isEmptyFloor(this.getX() + xOffset,
+                                                   this.getY() + yOffset,
+                                                   this.getZ())) {
+                        var swarm = new StarvelingSwarm();
+                        swarm.setX(this.getX() + xOffset);
+                        swarm.setY(this.getY() + yOffset);
+                        swarm.setZ(this.getZ());
+                        this.getMap().addEntity(swarm);
+                        // console.log('fungus is growing...')
+                        Game.message('The gorging swarm spawns a new swarm!')
+                        this.hunger += 10;
+                    }
+
+                }
+            } while (this.hunger < -10)
+        }
         //always hungry++
         this.hunger++;
         //if sufficiently hungry, chance of eating a swarmCount to reset hunger, 5% per point of hunger above the threshold
@@ -390,6 +440,16 @@ class StarvelingSwarm extends Enemy {
         if (this.lookout("wants").length > 0) {
             let nearbyWants = this.lookout("wants");
             let closestWant = this.getClosest(nearbyWants)
+
+            var offsets = Math.abs(closestWant._x - this.getX()) + 
+            Math.abs(closestWant._y - this.getY());
+                if (offsets === 1) {
+                    if (this.attacker) {
+                    this.eat(closestWant);
+                    return;
+                }
+            }
+
             this.seek(closestWant)
             return;
         }
