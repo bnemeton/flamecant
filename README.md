@@ -21,7 +21,7 @@ you can view controls at the help page, reachable at /help.html, but here are th
 i have been thinking of my plans broadly as either short term or long term; focusing on short term for now (of course) with the hope that i stick with this project long enough to get to any of the long term ones.
 
 ### short term
-- make items stack (you only have 26 inventory slots right now, and they probably won't display properly past like 7-8 items)
+- ~~make items stack (you only have 26 inventory slots right now, and they probably won't display properly past like 7-8 items)~~
 - set up the magic system (glyphs, words, brands, tinder, the associated menu screens, etc)
 - set up the light system (variable light intensities, seeing tiles illuminated by distant light sources, etc)
 - implement temperature/flammability/fire
