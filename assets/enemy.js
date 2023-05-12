@@ -54,7 +54,7 @@ class Enemy extends Entity {
                 break;
             case "wants":
                 nearbyThings = this._map.getItemsWithinRadius(this._x, this._y, this._z, this.smell);
-                console.log(`${this.name} smells ${nearbyThings.length} items nearby...`)
+                //console.log(`${this.name} smells ${nearbyThings.length} items nearby...`)
                 results = nearbyThings.filter(item => this.wants.includes(item.name))
                 break;
             case "friends":
@@ -75,14 +75,15 @@ class Enemy extends Entity {
             if (entity && entity !== target & entity !== thisEnemy) {
                 return false;
             }
-            console.log(`enemy ${thisEnemy.name} at ${thisEnemy._x}, ${thisEnemy._y} trying to path to ${target.name} at:`)
-            console.log(`coords: ${x}, ${y}, ${z}`)
+            //console.log(`enemy ${thisEnemy.name} at ${thisEnemy._x}, ${thisEnemy._y} trying to path to ${target.name} at:`)
+            //console.log(`coords: ${x}, ${y}, ${z}`)
             return thisEnemy._map.getTile(x, y, z).isWalkable;
         }, {topology: 4});
         let count = 0;
         path.compute(thisEnemy._x, thisEnemy._y, function (x, y) {
             if (count === 1) {
                 thisEnemy.tryMove( x, y, z)
+                return true;
             }
             count++;
         });
@@ -306,7 +307,7 @@ class Shambler extends Enemy {
     }
     act() {
         if (this._map.getItemsAt(this._x, this._y, this._z).length > 0) {
-            console.log(`a shambler notices some items in its tile...`)
+            //console.log(`a shambler notices some items in its tile...`)
             let items = this._map.getItemsAt(this._x, this._y, this._z)
             let indices = [];
             for (let i = 0; i < items.length; i++) {
@@ -322,14 +323,24 @@ class Shambler extends Enemy {
         if (this.burdened && this.lookout("friends").length > 0) {
             let nearbyFriends = this.lookout("friends");
             let closestFriend = this.getClosest(nearbyFriends)
-            seek(closestFriend) // to be implemented
-            return;
+            //console.log(closestFriend);
+            if (this.getDistance(closestFriend) <= 1) {
+                console.log(`shambler at ${this._x}, ${this._y} is next to a friend`)
+                this.dropItem(0);
+                Game.message(`A shambler drops something.`)
+                this.burdened = false;
+                return;
+            } 
+            else {
+                this.seek(closestFriend) // appears to be working
+                return;
+            }
         }
        if (this.lookout("wants").length > 0) {
             let nearbyWants = this.lookout("wants");
-            console.log(`shambler at ${this._x}, ${this._y} smells ${nearbyWants.length} things it wants`)
+            //console.log(`shambler at ${this._x}, ${this._y} smells ${nearbyWants.length} things it wants`)
             let closestWant = this.getClosest(nearbyWants)
-           this.seek(closestWant) // seeking undefined
+           this.seek(closestWant)
            return;
        } else {
            this.wander()

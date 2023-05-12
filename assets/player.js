@@ -82,7 +82,7 @@ class Player extends Entity {
 
         // If an entity was present at the tile, check if it's us. if it is, wait a turn
         if (target === this) {
-            console.log('waiting one turn.');
+            //console.log('waiting one turn.');
             return true;
         }
         if (target && this.attacker) {
@@ -112,7 +112,7 @@ class Player extends Entity {
         // if so try to dig it
         } else if (tile.isDiggable) {
             map.dig(x, y, z);
-            console.log('dug terrrain!')
+            //console.log('dug terrrain!')
             return true;
         }
         return false;

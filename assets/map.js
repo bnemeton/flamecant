@@ -23,11 +23,13 @@ class Map {
         //add the player
         this.addEntityAtRandomPosition(player, 0);
         //add enemies
-        var enemyTypes = [Fungus, StarvelingSwarm];
+        //var enemyTypes = [Fungus, StarvelingSwarm]; //actual enemyTypes
+        var enemyTypes = [Fungus] //test enemyTypes so you don't fucking die
         for (var z=0; z<this._depth; z++){
             for (var i=0; i < 20; i++) {
+                // enemy distribution
                 var RandomEnemy = enemyTypes[Math.floor(Math.random()*enemyTypes.length)]
-                this.addEntityAtRandomPosition(new RandomEnemy(), z);
+               this.addEntityAtRandomPosition(new RandomEnemy(), z);
             }
             // console.log(`spawned 20 enemies on floor ${z}`)
         }
@@ -221,12 +223,12 @@ class Map {
         if (entity.getX() < 0 || entity.getX() >= this._width ||
             entity.getY() < 0 || entity.getY() >= this._height ||
             entity.getZ() < 0 || entity.getZ() >= this._depth) {
-            console.log("!! Entity's position is out of bounds !!");
+            //console.log("!! Entity's position is out of bounds !!");
         }
         // Sanity check to make sure there is no entity at the new position.
         var key = entity.getX() + ',' + entity.getY() + ',' + entity.getZ();
         if (this._entities[key]) {
-            console.log('!! Tried to add an entity at an occupied position !!');
+            //console.log('!! Tried to add an entity at an occupied position !!');
         }
         // Add the entity to the table of entities
         // console.log('adding entity at new position')
@@ -271,7 +273,7 @@ class Map {
         }
         // console.log(`${counted} entities counted, ${results.length} results!`) // counted increases as fungi spawn, but results.length is always zero. aaaaaaa
         // console.log(results) // always empty array... even though things *are* getting stored in the _entities object and can be retrieved just fine. baffling.
-        console.log(`counted ${counted} items, found ${results.length} nearby`)
+        //console.log(`counted ${counted} items, found ${results.length} nearby`)
         return results;
     }
 
@@ -304,7 +306,7 @@ class Map {
             if (entity.getX() >= leftX && entity.getX() <= rightX && //entity.getX() isn't a function...? // bc entity was the key, addressed that
             entity.getY() >= topY && entity.getY() <= bottomY &&
             entity.getZ() === centerZ) {
-                console.log(entity.name+' detected!') // never fires???
+                //console.log(entity.name+' detected!') // never fires???
                 results.push(entity);
             }
             counted++

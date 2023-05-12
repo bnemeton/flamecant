@@ -12,7 +12,7 @@ class Entity extends Glyph{
         this.actor = properties['actor'] || false;
         this.canDig = properties['canDig'] || false;
         this.sight = properties['sight'] || 3;
-        this.smell = properties['smnell'] || 3;
+        this.smell = properties['smell'] || 3;
         // this.setX = function(x) {
         //     this._x = x;
         this.bagSlots = properties['bagSlots'] || 10;
@@ -40,6 +40,27 @@ class Entity extends Glyph{
         }
         return nearest;
     }
+    //method to get the distance between this and other entity
+    getDistance(target) {
+        let target_x = target._x;
+        let target_y = target._y;
+        let thisGuy = this;
+        let path = new ROT.Path.AStar(target_x, target_y, function(x, y) {
+            let entity = thisGuy._map.getEntityAt(x, y, thisGuy._z);
+            if (entity && entity !== target & entity !== thisGuy) {
+                return false;
+            }
+            return thisGuy._map.getTile(x, y, thisGuy._z).isWalkable;
+        }, {topology: 4});
+        let count = 0;
+        path.compute(this._x, this._y, function(x, y) {
+            count++;
+        });
+        return count;
+
+    }
+
+
     getBag() {
         return this.bag;
     }
@@ -89,7 +110,7 @@ class Entity extends Glyph{
             // have to offset the number of items already added.
 
             if (this.giveItem(mapItems[indices[i]  - added])) {
-                console.log('picked up a ' + mapItems[indices[i] - added].name)
+                //console.log('picked up a ' + mapItems[indices[i] - added].name)
                 mapItems.splice(indices[i] - added, 1);
                 added++;
             } else {

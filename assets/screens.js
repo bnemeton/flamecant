@@ -36,6 +36,8 @@ Game.Screen.startScreen = {
         displays.main.drawText(22, 12, ashColor + `
                                             go to /help.html for basic instructions,
                                             & a reference of commands!
+
+                                            go to /notes.html for a list of release notes and recent additions!
                                             
                                             an actual page with both the game & instructions
                                             & commands coming soon, along with actual basic 
@@ -120,7 +122,7 @@ class OptionWindow {
 
     handleInput(inputType, inputData) {
         // console.log('should be awaiting subscreen input...') // but it never hits any of the below ifs? but you can hit this console log again by hitting a key again
-        console.log(`input data: ${inputData.keyCode}`)
+        //console.log(`input data: ${inputData.keyCode}`)
         // console.log(`input type: ${inputType}`)
         if (inputType === 'keydown') {
             // If the user hit escape, hit enter and can't select an item, or hit
@@ -230,7 +232,7 @@ class ItemListScreen {
                 // Check if it maps to a valid item by subtracting 'a' from the character
                 // to know what letter of the alphabet we used.
                 var index = inputData.keyCode - ROT.KEYS.VK_A;
-                console.log(`this is the index: ${index}`) //this is correct, but the actual update onscreen is always for the first item?
+                //console.log(`this is the index: ${index}`) //this is correct, but the actual update onscreen is always for the first item?
                 if (this.items[index]) {
                     // If multiple selection is allowed, toggle the selection status, else
                     // select the item and exit the screen
@@ -284,7 +286,7 @@ Game.Screen.inventoryScreen = new ItemListScreen({
     selectable: true,
     okFunction: function(selectedItems, selectedIndices) {
         var item = selectedItems[0];
-        console.log(`attempting to use a(n) ${item.name}`)
+        //console.log(`attempting to use a(n) ${item.name}`)
         var window = new OptionWindow({
             index: selectedIndices[0],
             item: item,
@@ -703,7 +705,7 @@ Game.Screen.playScreen = {
                     this._map.getEngine().unlock();
                     break;
                 case ROT.KEYS.VK_I:
-                    console.log('inventory button hit')
+                    //console.log('inventory button hit')
                     if (this._player.getBag().length === 0) {
                         // If the player has no items, send a message and don't take a turn
                         Game.message("You are not carrying anything.");
@@ -726,7 +728,7 @@ Game.Screen.playScreen = {
                 //     }
                 //     break;
                 case ROT.KEYS.VK_P:
-                    console.log('pickup button hit')
+                    //console.log('pickup button hit')
                     var items = this._map.getItemsAt(this._player.getX(), this._player.getY(), this._player.getZ());
                     // If there are no items, show a message
                     if (items.length === 0) {
