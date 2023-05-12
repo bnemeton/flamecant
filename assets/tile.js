@@ -50,7 +50,7 @@ class NullTile extends Tile {
 class StairDown extends Tile {
     constructor() {
         super({
-            char: '<',
+            char: '>',
             fg: 'white',
             isWalkable: true,
             text: "There is a staircase descending to a lower floor here."
@@ -61,7 +61,7 @@ class StairDown extends Tile {
 class StairUp extends Tile {
     constructor() {
         super({
-            char: '>',
+            char: '<',
             fg: 'white',
             isWalkable: true,
             text: "There is a staircase ascending to an upper floor here."
