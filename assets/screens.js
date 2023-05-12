@@ -573,12 +573,29 @@ Game.Screen.playScreen = {
                     text = tile.text;
                    
                     let entity = this._map.getEntityAt(actualX,actualY,currentDepth)
+                    
                     if (entity) {
+                        //console.log(entity.name)
                         text = `There is a ${entity.name} here. ${entity.text}`
 
                         if (this._map.getEntityAt(actualX,actualY, currentDepth).name === 'branded') {
                             text += ` It's you.`
                         }
+                        let inventory = ``;
+                        if (entity.bag.length > 0) {
+                            for (let i=0; i < entity.bag.length; i++) {
+                                if (entity.bag[i]) {
+                                    inventory += `<li>${entity.bag[i].quantity} ${entity.bag[i].name}(s)</li>`
+                                }
+                                
+                            }
+                            if (inventory.length > 0) {
+                                text += ` It's carrying <ul>${inventory}</li>.`
+                            } else {
+                                text += ` It's not carrying anything.` 
+                            }
+                            
+                        } 
                     }
                     
                     items = this._map.getItemsAt(actualX,actualY,currentDepth);

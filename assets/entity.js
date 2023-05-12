@@ -122,7 +122,7 @@ class Entity extends Glyph{
         this._map.setItemsAt(this.getX(), this.getY(), this.getZ(), mapItems);
         
         if (added > 1){
-            Game.message("You picked up some items.")
+            Game.message(`${this.name} picked up some items.`)
         }
             
         // Return true only if we added all items
@@ -133,8 +133,9 @@ class Entity extends Glyph{
         if (this.bag[index]) {
             if (this._map) {
                 this._map.addItem(this.getX(), this.getY(), this.getZ(), this.bag[index]);
+                Game.message(`${this.name} dropped a ${this.bag[index].name}.`)
             }
-            Game.message(`You put down the ${this.bag[index].name}.`)  
+            // Game.message(`You put down the ${this.bag[index].name}.`)  
             if (this.bag[index].quantity > 1) {
                 this.bag[index].quantity--
                 return true;
@@ -147,6 +148,8 @@ class Entity extends Glyph{
         console.log(`${index} has no item in this bag, apparently`)
         return false;
     }
+
+
 
     getSightRadius() {
         return this.sight;

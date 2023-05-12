@@ -114,12 +114,7 @@ class Enemy extends Entity {
         this.hp -= damage - this.armor;
         console.log(`${this.name} has ${this.hp} hp remaining...`)
         if (this.hp <= 0) {
-            if (this.corpseRate > 0) {
-                this.tryDropCorpse();
-            }
-            // console.log(`attempting to remove a ${this.name}...`)
-            this.getMap().removeEntity(this);
-            Game.message(`The ${this.name} dies!`)
+            this.die(attacker);
         }
     }
     getHp() {
@@ -184,6 +179,24 @@ class Enemy extends Entity {
         // }
         return false;
     }
+    die(attacker) {
+        if (this.corpseRate > 0) {
+            this.tryDropCorpse();
+        }
+        this.dropLoot();
+        this.getMap().removeEntity(this);
+        Game.message(`The ${this.name} is killed by a ${attacker.name}!`)
+    }
+    dropLoot() {
+        for (let i = 0; i < this.bag.length; i++) {
+            if (this.bag[i]){
+                while (this.bag[i] && this.bag[i].quantity > 0) {
+                    this.dropItem(i);
+                }
+                //console.log(`a dying ${this.name} dropped a ${this.bag[i].name}`) //this is printing but the item isn't being placed on the map
+            }
+        }
+    }
     tryDropCorpse() {
         if (Math.round(Math.random() * 100) < this.corpseRate) {
             // Create a new corpse item and drop it.
@@ -208,10 +221,10 @@ class Fungus extends Enemy {
         let pickedColor = colors[Math.floor(Math.random()*colors.length)]
 
         super({
-            char: '෴',
+            char: '𝁵',
             fg: pickedColor,
             attacker: true,
-            corpseRate: 50,
+            corpseRate: 80,
             text: "A thick sheet, it carpets the floor of the cave. Every so often, you catch it twitching in the corner of your eye.",
             sight: 2
         })
@@ -281,6 +294,7 @@ class Shambler extends Enemy {
             corpseRate: 50,
             text: "An upright, ambulatory clump of fungus. It seems to take an interest in corpses.",
             smell: 10,
+            sight: 10,
             friends: ["fungus"]
         })
         this.name = 'shambler'
@@ -309,18 +323,28 @@ class Shambler extends Enemy {
         if (this._map.getItemsAt(this._x, this._y, this._z).length > 0) {
             //console.log(`a shambler notices some items in its tile...`)
             let items = this._map.getItemsAt(this._x, this._y, this._z)
-            let indices = [];
-            for (let i = 0; i < items.length; i++) {
-                if (this.wants.includes(items[i].name)) {
-                    indices.push(i);
+                let indices = [];
+                for (let i = 0; i < items.length; i++) {
+                    if (this.wants.includes(items[i].name)) {
+                        indices.push(i);
+                    }
                 }
-            }
-            this.pickupItems(indices);
-            Game.message(`A shambler picks something up.`)
-            this.burdened = true;
-            return;
+                if (indices.length > 0) {
+                    this.pickupItems(indices);
+                    // let itemList = ``;
+                    // for (let i = 0; i < indices.length; i++) {
+                    //     let index = indices[i];
+                    //     console.log(`index is ${index}`)
+                    //     itemList = itemList + (`a ` + items[index].name + `, `)
+                    // }
+
+                    Game.message(`A shambler picks up ${indices.length} item(s)...`)
+                    this.burdened = true;
+                    return;
+                }
         }
         if (this.burdened && this.lookout("friends").length > 0) {
+            Game.message(`A shambler carries its burden towards the fungus...`)
             let nearbyFriends = this.lookout("friends");
             let closestFriend = this.getClosest(nearbyFriends)
             //console.log(closestFriend);
