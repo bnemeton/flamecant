@@ -48,21 +48,31 @@ class Enemy extends Entity {
         switch(type){
             case "foes": 
                 nearbyThings = this._map.getEntitiesWithinRadius(this._x, this._y, this._z, this.sight);
-                results = nearbyThings.filter(guy => 
-                    this.canSee(guy) && this.foes.includes(guy.name)
-                )
+                if (nearbyThings) {
+                    results = nearbyThings.filter(guy => 
+                        this.canSee(guy) && this.foes.includes(guy.name)
+                    )
+                }
                 break;
             case "wants":
                 nearbyThings = this._map.getItemsWithinRadius(this._x, this._y, this._z, this.smell);
-                //console.log(`${this.name} smells ${nearbyThings.length} items nearby...`)
+                if (nearbyThings) {
+                    //console.log(`${this.name} smells ${nearbyThings.length} items nearby...`)
                 results = nearbyThings.filter(item => this.wants.includes(item.name))
+                }
                 break;
             case "friends":
                 nearbyThings = this._map.getEntitiesWithinRadius(this._x, this._y, this._z, this.sight);
-                results = nearbyThings.filter(guy => this.friends.includes(guy.name))
+                if (nearbyThings) {
+                    results = nearbyThings.filter(guy => this.friends.includes(guy.name))
+                }
                 break;
         }
-        return results;
+        if (results.length > 0) {
+            return results;
+        } else {        
+            return false;
+        }
     }
     seek(target) {
         // console.log(target); //why is it seeking an empty target?
@@ -89,7 +99,7 @@ class Enemy extends Entity {
         });
     }
     attack(target) {
-        console.log(`enemy attacking/targeting ${target.name}`)
+        //console.log(`enemy attacking/targeting ${target.name}`)
         //only do this if the target is mortal
         if(target.mortal) {
             let damage = this.damage;
@@ -237,8 +247,27 @@ class Fungus extends Enemy {
         // console.log('fungus acting!')
         // Check if we are going to try growing this turn
         if (this.growthsLeft > 0) {
-            if (Math.random() <= 0.02) {
-
+            let adjacentItems = this._map.getItemsWithinRadius(this._x, this._y, this._z, 1);
+            if (adjacentItems.length > 0) {
+                adjacentItems.forEach(item => {
+                    if (item instanceof Corpse && item.name != 'fungus remains') {
+                        this.growthsLeft--;
+                        //create a new bloom and put it where the corpse is
+                        let bloom = new Bloom();
+                        bloom.setPosition(item._x, item._y, item._z);
+                        // bloom.setX(item._x);
+                        // bloom.setY(item._y);
+                        // bloom.setZ(item._z);
+                        this._map.addEntity(bloom);
+                        Game.message(`Colorful fungus blooms from the ${item.name}!`)
+                        //delete the corpse
+                        this._map.removeItem(item);
+                        return;
+                    }
+                }
+                )
+            }
+            if (Math.random() <= 0.05) {
                 //on growth attempt, check number of fungi in radius 2; if greater than 8, die and spawn a shambler instead
                 let nearbyGuys = this._map.getEntitiesWithinRadius(this._x, this._y, this._z, this.sight) // this always returns empty for some reason, entities are never detected
                 // console.log(nearbyGuys) //always returning an empty array, which explains why nothing below is working // lmao passed no radius to get entities etc // nope still returning empty
@@ -249,7 +278,7 @@ class Fungus extends Enemy {
                         // console.log('incrementing nearbyFungi...')
                     }
                 })
-                if (nearbyFungi >= 8) {
+                if (nearbyFungi >= 12) {
                     let shambler = new Shambler();
                     shambler.setX(this._x);
                     shambler.setY(this._y);
@@ -302,9 +331,8 @@ class Shambler extends Enemy {
         this.damage = 1;
         this.burdened = false;
         this.wants = [
-            "fungus remains",
             "shambler remains",
-            "mossmuncher remains"
+            "moldmunch remains"
         ]
     }
 
@@ -350,7 +378,7 @@ class Shambler extends Enemy {
             //console.log(closestFriend);
             if (this.getDistance(closestFriend) <= 1) {
                 console.log(`shambler at ${this._x}, ${this._y} is next to a friend`)
-                this.dropItem(0);
+                this.dropLoot();
                 Game.message(`A shambler drops something.`)
                 this.burdened = false;
                 return;
@@ -370,6 +398,66 @@ class Shambler extends Enemy {
            this.wander()
        }
     }
+}
+
+class Bloom extends Enemy {
+    constructor() {
+        let colors = [
+           `#00c4a7`,
+           `#be0bde`,
+           `#86eb4b`,
+           `#93ff80`,
+           `#219bed`,
+           `#ff78db`,
+           `#35cbfc`
+        ];
+
+        let pickedColor = colors[Math.floor(Math.random()*colors.length)]
+
+        super({
+            char: '𐙱',
+            fg: pickedColor,
+            attacker: true,
+            corpseRate: 0,
+            text: "A towering bulbous structure of brightly colored fungus. It has no eyes, but seems to track your location. It defends fungal beds with dense spore projectiles.",
+            sight: 2
+            })
+
+            this.name = 'bloom'
+            this.hp = 5;
+            this.damage = 2;
+            this.foes = ['branded', 'moldmunch']
+
+            
+    }
+
+    act() {
+        if (this.lookout("foes").length > 0) {
+            // let nearbyFoes = this.lookout("foes");
+            // let closestFoe = this.getClosest(nearbyFoes)
+            //this.attack(closestFoe)
+            return;
+        } else {
+            //spawn fungus in every adjacent empty tile sometimes
+            if (Math.random() < 0.2) {
+                Game.message(`A bloom releases a cloud of spores...`)
+                for (let i=-1;i<1;i++) {
+                    for (let j=-1;j<1;j++) {
+                        if (this._map.isEmptyFloor(this._x+i, this._y+j, this._z)) {
+                            let fungus = new Fungus();
+                            fungus.setPosition(this._x+i, this._y+j, this._z);
+                            this._map.addEntity(fungus);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+class Moldmunch extends Enemy {
+
 }
 
 class StarvelingSwarm extends Enemy {
